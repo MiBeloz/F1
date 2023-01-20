@@ -7,7 +7,8 @@ void writePilot(std::vector<Pilot>& _pilot);
 int main() {
 	setlocale(LC_ALL, "ru");
 
-	std::vector<Pilot> pilot{};
+	std::vector<Pilot> pilot;
+
 	int menu{};
 	while (true) {
 		std::cout << "\n\t0 - выход\n\t1 - внести в базу пилота\n\t2 - вывести базу пилотов" << std::endl;

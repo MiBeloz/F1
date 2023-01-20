@@ -1,6 +1,6 @@
 ﻿#include "pilot.h"
 
-Pilot::Pilot() :name{}, surname{}, country{}, dayOfBirth{}, monthOfBirth{}, yearOfBirth{}, 
+Pilot::Pilot() :name{}, surname{}, country{}, dayOfBirth{}, monthOfBirth{}, yearOfBirth{},
 			seasons{}, p_seasons{ nullptr }, teams{}, p_teams{ nullptr }, numbers{}, p_numbers{ nullptr } {}
 
 Pilot::Pilot(std::string _name, std::string _surname, std::string _country, int _dayOfBirth, int _monthOfBirth, int _yearOfBirth, 
@@ -13,8 +13,7 @@ Pilot::Pilot(std::string _name, std::string _surname, std::string _country, int 
 	yearOfBirth = _yearOfBirth;
 	seasons = _seasons;
 	p_seasons = new int[seasons] {};
-	for (int i = 0; i < seasons; i++) 
-	{ p_seasons[i] = _p_seasons[i]; }
+	for (int i = 0; i < seasons; i++) { p_seasons[i] = _p_seasons[i]; }
 	teams = _teams;
 	p_teams = new std::string[teams] {};
 	for (int i = 0; i < teams; i++) { p_teams[i] = _p_teams[i]; }
@@ -27,6 +26,24 @@ Pilot::~Pilot() {
 	if (p_seasons != nullptr) { delete[] p_seasons; } p_seasons = nullptr;
 	if (p_teams != nullptr) { delete[] p_teams; } p_teams = nullptr;
 	if (p_numbers != nullptr) { delete[] p_numbers; } p_numbers = nullptr;
+}
+
+Pilot::Pilot(const Pilot& _pilot) {
+	name = _pilot.name;
+	surname = _pilot.surname;
+	country = _pilot.country;
+	dayOfBirth = _pilot.dayOfBirth;
+	monthOfBirth = _pilot.monthOfBirth;
+	yearOfBirth = _pilot.yearOfBirth;
+	seasons = _pilot.seasons;
+	p_seasons = new int[seasons];
+	for (int i = 0; i < seasons; i++) { p_seasons[i] = _pilot.p_seasons[i]; }
+	teams = _pilot.teams;
+	p_teams = new std::string[teams];
+	for (int i = 0; i < teams; i++) { p_teams[i] = _pilot.p_teams[i]; }
+	numbers = _pilot.numbers;
+	p_numbers = new int[numbers];
+	for (int i = 0; i < numbers; i++) { p_numbers[i] = _pilot.p_numbers[i]; }
 }
 
 std::string Pilot::getShortName() { return name.at(0) + ". " + surname; }
