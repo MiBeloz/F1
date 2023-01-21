@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 
 class Pilot {
@@ -29,4 +30,5 @@ public:
 	int getNumbers(int i);
 	int getNumbers();
 	void setNumbers(int i, int n);
+	void printPilot();
 };

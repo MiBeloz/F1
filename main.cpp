@@ -16,7 +16,11 @@ int main() {
 		if (menu >= 0 && menu <= 2) {
 			if (menu == 0) { break; }
 			else if (menu == 1) { writePilot(pilot); }
-			else if (menu == 2) {;}
+			else if (menu == 2) {
+				for (int i = 0; i < pilot.size(); i++) {
+					pilot.at(i).printPilot();
+				}
+			}
 		}
 		else {
 			std::cout << "Неккоректная команда!" << std::endl;

@@ -46,7 +46,7 @@ Pilot::Pilot(const Pilot& _pilot) {
 	for (int i = 0; i < numbers; i++) { p_numbers[i] = _pilot.p_numbers[i]; }
 }
 
-std::string Pilot::getShortName() { return name.at(0) + ". " + surname; }
+std::string Pilot::getShortName() { return name[0] + ". " + surname; }
 
 std::string Pilot::getFullName() { return name + ' ' + surname; }
 
@@ -88,4 +88,29 @@ int Pilot::getNumbers() { return numbers; }
 void Pilot::setNumbers(int i, int n) {
 	if (i < 0 || i >= numbers) { return; }
 	else { p_numbers[i] = n; }
+}
+
+void Pilot::printPilot() {
+	std::cout << "Пилот: " << getShortName() << std::endl;
+	std::cout << "Страна: " << country << std::endl;
+	std::cout << "Дата рождения: " << getDateOfBirth() << std::endl;
+	std::cout << "Участвовал в " << seasons << " сезонах в Формуле 1: ";
+
+	for (int i = 0; i < seasons; i++) {
+		if (i == seasons - 1) { std::cout << p_seasons[i] << "." << std::endl; }
+		else { std::cout << p_seasons[i] << ", "; }
+	}
+
+	if (teams == 1) { std::cout << "Выступал в " << teams << " команде: "; }
+	else { std::cout << "Выступал в " << teams << " командах: "; }
+	for (int i = 0; i < teams; i++) {
+		if (i == teams - 1) { std::cout << p_teams[i] << "." << std::endl; }
+		else { std::cout << p_teams[i] << ", "; }
+	}
+
+	std::cout << "Выступал под номерами: ";
+	for (int i = 0; i < numbers; i++) {
+		if (i == numbers - 1) { std::cout << p_numbers[i] << ".\n" << std::endl; }
+		else { std::cout << p_numbers[i] << ", "; }
+	}
 }
