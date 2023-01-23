@@ -1,39 +1,16 @@
-[pilot0]
-Mick|
-Schumacher|
-German|
-5
-4
-1999
-2
-2002
-2003
-2
-Haas|
-Red Bull|
-1
-96
+[pilot]0
+Mick|Schumacher|German|
+5 4 1999 2 2002 2003 2 Haas|Red Bull|1 96
 
-[pilot1]
-Mika|
-Hakkinen|
-Finland|
-30
-5
-1966
-6
-1994
-1995
-1998
-1999
-2000
-2002
-3
-Sauber|
-BMW|
-Torro Rosso|
-3
-1
-33
-57
+[pilot]1
+Mika|Hakkinen|Finland|
+30 5 1966 6 1994 1995 1998 1999 2000 2002 3 Sauber|BMW|Torro Rosso|3 1 33 57 
+
+[pilot]2
+ggggg|gg|hhh|
+3 3 1900 1 1950 1 Aa|1 5 
+
+[pilot]3
+yyy|uuu|lll|
+6 6 1966 2 1960 1961 2 Ggg|gg|1 6 
 

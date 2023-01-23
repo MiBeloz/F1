@@ -104,8 +104,8 @@ void Pilot::printPilot() {
 		else { std::cout << p_seasons[i] << ", "; }
 	}
 
-	if (teams == 1) { std::cout << "Выступал в " << teams << " команде: "; }
-	else { std::cout << "Выступал в " << teams << " командах: "; }
+	if (teams == 1) { std::cout << "Выступал в " << teams << " команде:"; }
+	else { std::cout << "Выступал в " << teams << " командах:"; }
 	for (int i = 0; i < teams; i++) {
 		if (i == teams - 1) { std::cout << p_teams[i] << "." << std::endl; }
 		else { std::cout << p_teams[i] << ", "; }
@@ -122,26 +122,26 @@ void Pilot::writePilot(std::string fileName, const int num) {
 	std::fstream file;
 	file.open(fileName, std::fstream::out | std::fstream::app);
 	if (file.is_open()) {
-		file << "[pilot" + std::to_string(num) + "]" << std::endl;
-		file << name << '|' << std::endl;
-		file << surname << '|' << std::endl;
+		file << "[pilot]" + std::to_string(num) << std::endl;
+		file << name << '|';
+		file << surname << '|';
 		file << country << '|' << std::endl;
-		file << dayOfBirth << std::endl;
-		file << monthOfBirth << std::endl;
-		file << yearOfBirth << std::endl;
-		file << seasons << std::endl;
+		file << dayOfBirth << " ";
+		file << monthOfBirth << " ";
+		file << yearOfBirth << " ";
+		file << seasons << " ";
 		for (int i = 0; i < seasons; i++) {
-			file << p_seasons[i] << std::endl;
+			file << p_seasons[i] << " ";
 		}
-		file << teams << std::endl;
+		file << teams << " ";
 		for (int i = 0; i < teams; i++) {
-			file << p_teams[i] << '|' << std::endl;
+			file << p_teams[i] << '|';
 		}
-		file << numbers << std::endl;
+		file << numbers << " ";
 		for (int i = 0; i < numbers; i++) {
-			file << p_numbers[i] << std::endl;
+			file << p_numbers[i] << " ";
 		}
-		file << std::endl;
+		file << std::endl << std::endl;
 		std::cout << "Пилот успешно занесен в базу!" << std::endl;
 	}
 	else {
@@ -156,19 +156,17 @@ void Pilot::readPilot(std::string fileName, const int num) {
 	file.open(fileName, std::fstream::in);
 	if (file.is_open()) {
 		while (file >> str) {
-			if (str == "[pilot" + std::to_string(num) + "]") {
+			if (str == "[pilot]" + std::to_string(num)) {
 				std::getline(file, str, '|');
 				name = str.substr(1);
 
-				std::getline(file, str, '|');
-				surname = str.substr(1);
+				std::getline(file, surname, '|');
+				//surname = str.substr(1);
 
-				std::getline(file, str, '|');
-				country = str.substr(1);
+				std::getline(file, country, '|');
+				//country = str.substr(1);
 
-				file >> dayOfBirth;
-				file >> monthOfBirth;
-				file >> yearOfBirth;
+				file >> dayOfBirth >> monthOfBirth >> yearOfBirth;
 				file >> seasons;
 				p_seasons = new int[seasons];
 				for (int i = 0; i < seasons; i++) {
@@ -177,8 +175,8 @@ void Pilot::readPilot(std::string fileName, const int num) {
 				file >> teams;
 				p_teams = new std::string[teams];
 				for (int i = 0; i < teams; i++) {
-					std::getline(file, str, '|' );
-					p_teams[i] = str.substr(1);
+					std::getline(file, p_teams[i], '|' );
+					//p_teams[i] = str.substr(1);
 				}
 				file >> numbers;
 				p_numbers = new int[numbers];
