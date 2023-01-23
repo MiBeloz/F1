@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <Windows.h>
 
 class Pilot {
 private:
@@ -31,4 +33,6 @@ public:
 	int getNumbers();
 	void setNumbers(int i, int n);
 	void printPilot();
+	void writePilot(std::string fileName, const int num);
+	void readPilot(std::string fileName, const int num);
 };

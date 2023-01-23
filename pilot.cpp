@@ -46,7 +46,10 @@ Pilot::Pilot(const Pilot& _pilot) {
 	for (int i = 0; i < numbers; i++) { p_numbers[i] = _pilot.p_numbers[i]; }
 }
 
-std::string Pilot::getShortName() { return name[0] + ". " + surname; }
+std::string Pilot::getShortName() { 
+	std::string strName(1, name[0]);
+	return  strName + ". " + surname;
+}
 
 std::string Pilot::getFullName() { return name + ' ' + surname; }
 
@@ -113,4 +116,80 @@ void Pilot::printPilot() {
 		if (i == numbers - 1) { std::cout << p_numbers[i] << ".\n" << std::endl; }
 		else { std::cout << p_numbers[i] << ", "; }
 	}
+}
+
+void Pilot::writePilot(std::string fileName, const int num) {
+	std::fstream file;
+	file.open(fileName, std::fstream::out | std::fstream::app);
+	if (file.is_open()) {
+		file << "[pilot" + std::to_string(num) + "]" << std::endl;
+		file << name << '|' << std::endl;
+		file << surname << '|' << std::endl;
+		file << country << '|' << std::endl;
+		file << dayOfBirth << std::endl;
+		file << monthOfBirth << std::endl;
+		file << yearOfBirth << std::endl;
+		file << seasons << std::endl;
+		for (int i = 0; i < seasons; i++) {
+			file << p_seasons[i] << std::endl;
+		}
+		file << teams << std::endl;
+		for (int i = 0; i < teams; i++) {
+			file << p_teams[i] << '|' << std::endl;
+		}
+		file << numbers << std::endl;
+		for (int i = 0; i < numbers; i++) {
+			file << p_numbers[i] << std::endl;
+		}
+		file << std::endl;
+		std::cout << "Пилот успешно занесен в базу!" << std::endl;
+	}
+	else {
+		std::cout << "Ошибка открытия файла '" << fileName << "'!";
+	}
+	file.close();
+}
+
+void Pilot::readPilot(std::string fileName, const int num) {
+	std::fstream file;
+	std::string str;
+	file.open(fileName, std::fstream::in);
+	if (file.is_open()) {
+		while (file >> str) {
+			if (str == "[pilot" + std::to_string(num) + "]") {
+				std::getline(file, str, '|');
+				name = str.substr(1);
+
+				std::getline(file, str, '|');
+				surname = str.substr(1);
+
+				std::getline(file, str, '|');
+				country = str.substr(1);
+
+				file >> dayOfBirth;
+				file >> monthOfBirth;
+				file >> yearOfBirth;
+				file >> seasons;
+				p_seasons = new int[seasons];
+				for (int i = 0; i < seasons; i++) {
+					file >> p_seasons[i];
+				}
+				file >> teams;
+				p_teams = new std::string[teams];
+				for (int i = 0; i < teams; i++) {
+					std::getline(file, str, '|' );
+					p_teams[i] = str.substr(1);
+				}
+				file >> numbers;
+				p_numbers = new int[numbers];
+				for (int i = 0; i < numbers; i++) {
+					file >> p_numbers[i];
+				}
+			}
+		}
+	}
+	else {
+		std::cout << "Не удалось считать данные!" << std::endl;
+	}
+	file.close();
 }

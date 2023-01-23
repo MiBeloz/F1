@@ -8,6 +8,23 @@ int main() {
 	setlocale(LC_ALL, "ru");
 
 	std::vector<Pilot> pilot;
+	std::fstream settingsFile;
+	int size{};
+	settingsFile.open("settings.txt", std::fstream::in);
+	if (settingsFile.is_open()) {
+		settingsFile >> size;
+	}
+	else {
+		std::cout << "Ошибка открытия файла настроек!" << std::endl;
+	}
+	settingsFile.close();
+
+	if (size != 0) {
+		pilot.resize(size);
+	}
+	for (int i = 0; i < pilot.size(); i++) {
+		pilot.at(i).readPilot("pilots.txt", i);
+	}
 
 	int menu{};
 	while (true) {
@@ -15,7 +32,19 @@ int main() {
 		std::cin >> menu;
 		if (menu >= 0 && menu <= 2) {
 			if (menu == 0) { break; }
-			else if (menu == 1) { writePilot(pilot); }
+			else if (menu == 1) { 
+				writePilot(pilot);
+				settingsFile.open("settings.txt", std::fstream::out);
+				if (settingsFile.is_open()) {
+					settingsFile << pilot.size();
+				}
+				else {
+					std::cout << "Ошибка открытия файла настроек!" << std::endl;
+					break;
+				}
+				settingsFile.close();
+				pilot.at(pilot.size() - 1).writePilot("pilots.txt", pilot.size() - 1);
+			}
 			else if (menu == 2) {
 				for (int i = 0; i < pilot.size(); i++) {
 					pilot.at(i).printPilot();
@@ -98,7 +127,7 @@ void writePilot(std::vector<Pilot>& _pilot) {
 	p_teams = new std::string[teams];
 	for (int i = 0; i < teams; i++) {
 		std::cout << "Введите команду №" << i + 1 << ":" << std::endl;
-		std::cin.get();
+		if (i == 0) { std::cin.get(); }
 		std::getline(std::cin, p_teams[i]);
 	}
 
