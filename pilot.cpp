@@ -28,7 +28,7 @@ Pilot::~Pilot() {
 	if (p_numbers != nullptr) { delete[] p_numbers; } p_numbers = nullptr;
 }
 
-Pilot::Pilot(const Pilot& _pilot) {
+Pilot& Pilot::operator=(const Pilot& _pilot) {
 	name = _pilot.name;
 	surname = _pilot.surname;
 	country = _pilot.country;
@@ -44,6 +44,7 @@ Pilot::Pilot(const Pilot& _pilot) {
 	numbers = _pilot.numbers;
 	p_numbers = new int[numbers];
 	for (int i = 0; i < numbers; i++) { p_numbers[i] = _pilot.p_numbers[i]; }
+	return *this;
 }
 
 std::string Pilot::getShortName() { 
@@ -185,6 +186,7 @@ void Pilot::readPilot(const std::string fileName, const int num) {
 					for (int i = 0; i < numbers; i++) {
 						file >> p_numbers[i];
 					}
+					break;
 				}
 			}
 		}

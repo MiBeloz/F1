@@ -17,7 +17,7 @@ public:
 	Pilot(std::string _name, std::string _surname, std::string _country, int _dayOfBirth, int _monthOfBirth, int _yearOfBirth, 
 		int _seasons, int* _p_seasons, int _teams, std::string* _p_teams, int _numbers, int* _p_numbers);
 	~Pilot();
-	Pilot(const Pilot& _pilot);
+	Pilot& operator=(const Pilot& _pilot);
 	std::string getShortName();
 	std::string getFullName();
 	std::string getCountry();
