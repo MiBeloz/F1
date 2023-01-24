@@ -1,63 +1,97 @@
 #include "pilot.h"
-#include <iostream>
 #include <vector>
 
+int getNumPilots(const std::string fileName);
 void writePilot(std::vector<Pilot>& _pilot);
 
 int main() {
 	setlocale(LC_ALL, "ru");
+	std::string pathPilots = "pilots.txt";
+	//std::string pathTracks = "tracks.txt";
+	int numberDelete{};
+	std::string pilotName;
 
 	std::vector<Pilot> pilot;
-	std::fstream settingsFile;
-	int size{};
-	settingsFile.open("settings.txt", std::fstream::in);
-	if (settingsFile.is_open()) {
-		settingsFile >> size;
-	}
-	else {
-		std::cout << "Ошибка открытия файла настроек!" << std::endl;
-	}
-	settingsFile.close();
+	int size = getNumPilots(pathPilots);
+	pilot.resize(size);
 
-	if (size != 0) {
-		pilot.resize(size);
-	}
 	for (int i = 0; i < pilot.size(); i++) {
-		pilot.at(i).readPilot("pilots.txt", i);
+		pilot.at(i).readPilot(pathPilots, i);
 	}
 
 	int menu{};
 	while (true) {
-		std::cout << "\n\t0 - выход\n\t1 - внести в базу пилота\n\t2 - вывести базу пилотов" << std::endl;
+		std::cout << "\n\t0 - выход\n\t1 - внести в базу пилота\n\t2 - удалить пилота\n\t3 - вывести базу пилотов" << std::endl;
 		std::cin >> menu;
-		if (menu >= 0 && menu <= 2) {
+		if (menu >= 0 && menu <= 3) {
 			if (menu == 0) { break; }
 			else if (menu == 1) { 
 				writePilot(pilot);
-				settingsFile.open("settings.txt", std::fstream::out);
-				if (settingsFile.is_open()) {
-					settingsFile << pilot.size();
-				}
-				else {
-					std::cout << "Ошибка открытия файла настроек!" << std::endl;
-					break;
-				}
-				settingsFile.close();
-				pilot.at(pilot.size() - 1).writePilot("pilots.txt", pilot.size() - 1);
+				pilot.at(pilot.size() - 1).writePilot("pilots.txt", static_cast<int>(pilot.size()) - 1, 0);
 			}
 			else if (menu == 2) {
+				system("cls");
+				if (size < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
+				std::cout << "Введите номер пилота, которого нужно удалить(0 - отмена):" << std::endl;
+				for (int i = 0; i < pilot.size(); i++) {
+					std::cout << i + 1 << " - " << pilot.at(i).getFullName() << std::endl;
+				}
+				while (true)
+				{
+					std::cin >> numberDelete;
+					if (numberDelete == 0) { system("cls"); break; }
+					else if (numberDelete < 1 || numberDelete > size) { std::cout << "Неверно введен номер, введите еще раз:" << std::endl; continue; }
+					else {
+						numberDelete--;
+						pilotName = pilot.at(numberDelete).getFullName();
+						for (int i = 0; i < pilot.size(); i++) {
+							if (i != numberDelete) {
+								pilot.at(i).writePilot(pathPilots, i, 1);
+							}
+						}
+						//pilot.at(numberDelete).deletePilot();
+						size = getNumPilots(pathPilots);
+						for (int i = 0; i < pilot.size(); i++) {
+							pilot.at(i).readPilot(pathPilots, i);
+						}
+						system("cls");
+						std::cout << pilotName << " удален из базы пилотов!" << std::endl;
+						pilotName = "";
+						numberDelete = 0;
+						break;
+					}
+				}
+			}
+			else if (menu == 3) {
+				system("cls");
+				if (size < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
 				for (int i = 0; i < pilot.size(); i++) {
 					pilot.at(i).printPilot();
 				}
 			}
 		}
-		else {
-			std::cout << "Неккоректная команда!" << std::endl;
-		}
+		else { std::cout << "Неккоректная команда!" << std::endl; }
 	}
 
 	//system("pause > nul");
 	return 0;
+}
+
+int getNumPilots(const std::string fileName) {
+	int size{};
+	std::string str;
+	std::fstream file;
+	file.open(fileName, std::fstream::in);
+	if (file.is_open()) {
+		while (file >> str) {
+			if (str == "[pilot]") { size++; }
+		}
+	}
+	else {
+		std::cout << "Ошибка открытия файла '" << fileName << "'!" << std::endl;
+	}
+	file.close();
+	return size;
 }
 
 void writePilot(std::vector<Pilot>& _pilot) {

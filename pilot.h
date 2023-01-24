@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <Windows.h>
 
 class Pilot {
 private:
@@ -23,16 +22,16 @@ public:
 	std::string getFullName();
 	std::string getCountry();
 	std::string getDateOfBirth();
-	int getSeasons(int i);
+	int getSeasons(const int i);
 	int getSeasons();
-	void setSeasons(int i, int n);
-	std::string getTeams(int i);
+	void setSeasons(const int i, const int n);
+	std::string getTeams(const int i);
 	int getTeams();
-	void setTeams(int i, std::string str);
-	int getNumbers(int i);
+	void setTeams(const int i, const std::string str);
+	int getNumbers(const int i);
 	int getNumbers();
-	void setNumbers(int i, int n);
+	void setNumbers(const int i, const int n);
 	void printPilot();
-	void writePilot(std::string fileName, const int num);
-	void readPilot(std::string fileName, const int num);
+	void writePilot(const std::string fileName, const int num, const int del);
+	void readPilot(const std::string fileName, const int num);
 };
