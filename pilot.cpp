@@ -23,9 +23,15 @@ Pilot::Pilot(std::string _name, std::string _surname, std::string _country, int 
 }
 
 Pilot::~Pilot() {
-	if (p_seasons != nullptr) { delete[] p_seasons; } p_seasons = nullptr;
-	if (p_teams != nullptr) { delete[] p_teams; } p_teams = nullptr;
-	if (p_numbers != nullptr) { delete[] p_numbers; } p_numbers = nullptr;
+	if (p_seasons != nullptr)
+		delete[] p_seasons;
+	p_seasons = nullptr;
+	if (p_teams != nullptr)
+		delete[] p_teams;
+	p_teams = nullptr;
+	if (p_numbers != nullptr)
+		delete[] p_numbers;
+	p_numbers = nullptr;
 }
 
 Pilot& Pilot::operator=(const Pilot& _pilot) {
@@ -120,10 +126,9 @@ void Pilot::printPilot() {
 	}
 }
 
-void Pilot::writePilot(const std::string fileName, const int num, const int del) {
+void Pilot::writePilot(const std::string fileName, const int num) {
 	std::fstream file;
-	if (del == 0) { file.open(fileName, std::fstream::out | std::fstream::app); }
-	else { file.open(fileName, std::fstream::out); }
+	file.open(fileName, std::fstream::out | std::fstream::app);
 	if (file.is_open()) {
 		file << "[pilot] " << std::to_string(num) << std::endl;
 		file << name << '|';

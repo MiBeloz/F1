@@ -1,12 +1,14 @@
 #include "pilot.h"
 
 int getNumPilots(const std::string fileName);
-Pilot writePilot();
+void writePilot(Pilot& _pilot);
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	std::string pathPilots = "pilots.txt";
-	//std::string pathTracks = "tracks.txt";
+	std::string pathPilots = "pilots.dbf";
+	std::string pathPilotsTemp = "pilots.dbf.tmp";
+	//std::string pathTracks = "tracks.dbf";
+	//std::string pathTracksTemp = "tracks.dbf.tmp";
 
 	int numberDelete{};
 	std::string pilotName;
@@ -23,9 +25,9 @@ int main() {
 			else if (menu == 1) { 
 				system("cls");
 				pilot = new Pilot;
-				*pilot = writePilot();
+				writePilot(*pilot);
 				system("cls");
-				pilot->writePilot("pilots.txt", ++size, 0);
+				pilot->writePilot(pathPilots, ++size);
 				delete pilot;
 				pilot = nullptr;
 			}
@@ -33,9 +35,12 @@ int main() {
 				system("cls");
 				if (size < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
 				std::cout << "Введите номер пилота, которого нужно удалить(0 - отмена):" << std::endl;
-				for (int i = 0; i < size; i++) {
-					pilot->readPilot(pathPilots, i + 1);
-					std::cout << i + 1 << " - " << pilot->getFullName() << std::endl;
+				for (int i = 1; i <= size; i++) {
+					pilot = new Pilot;
+					pilot->readPilot(pathPilots, i);
+					std::cout << i << " - " << pilot->getFullName() << std::endl;
+					delete pilot;
+					pilot = nullptr;
 				}
 				while (true)
 				{
@@ -43,14 +48,29 @@ int main() {
 					if (numberDelete == 0) { system("cls"); break; }
 					else if (numberDelete < 1 || numberDelete > size) { std::cout << "Неверно введен номер, введите еще раз:" << std::endl; continue; }
 					else {
+						pilot = new Pilot;
 						pilot->readPilot(pathPilots, numberDelete);
 						pilotName = pilot->getFullName();
-						for (int i = 0; i < size; i++) {
-							if (i != numberDelete) {
-								pilot->writePilot(pathPilots, i + 1, 1);
+						delete pilot;
+						pilot = nullptr;
+						if (size > 1) {
+							for (int i = 1, j = 1; i <= size; i++) {
+								if (i != numberDelete) {
+									pilot = new Pilot;
+									pilot->readPilot(pathPilots, i);
+									pilot->writePilot(pathPilotsTemp, j);
+									j++;
+									delete pilot;
+									pilot = nullptr;
+								}
 							}
+							remove(pathPilots.c_str());
+							if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { return 1; };
 						}
-						//pilot.at(numberDelete).deletePilot();
+						else {
+							std::fstream clear_file(pathPilots, std::fstream::out);
+							clear_file.close();
+						}
 						size = getNumPilots(pathPilots);
 						system("cls");
 						std::cout << pilotName << " удален из базы пилотов!" << std::endl;
@@ -95,7 +115,7 @@ int getNumPilots(const std::string fileName) {
 	return size;
 }
 
-Pilot writePilot() {
+void writePilot(Pilot& _pilot) {
 	std::string name, surname, country;
 	int dayOfBirth{}, monthOfBirth{}, yearOfBirth{};
 	int seasons{}, teams{}, numbers{};
@@ -103,7 +123,7 @@ Pilot writePilot() {
 	std::string* p_teams{ nullptr };
 	int* p_numbers{ nullptr };
 
-
+	SetConsoleCP(1251);
 	std::cout << "Введите имя пилота:" << std::endl;
 	std::cin.get();
 	std::getline(std::cin, name);
@@ -182,7 +202,8 @@ Pilot writePilot() {
 			else { break; }
 		}
 	}
+	SetConsoleCP(866);
 
-	Pilot _pilot(name, surname, country, dayOfBirth, monthOfBirth, yearOfBirth, seasons, p_seasons, teams, p_teams, numbers, p_numbers);
-	return _pilot;
+	Pilot pilot(name, surname, country, dayOfBirth, monthOfBirth, yearOfBirth, seasons, p_seasons, teams, p_teams, numbers, p_numbers);
+	_pilot = pilot;
 }

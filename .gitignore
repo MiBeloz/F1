@@ -2,6 +2,7 @@
 !.gitignore
 !*.h
 !*.cpp
+!*.dbf
 !*.txt
 !*.sln
 !*.vcxproj

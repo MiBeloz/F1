@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <Windows.h>
 
 class Pilot {
 private:
@@ -32,6 +33,6 @@ public:
 	int getNumbers();
 	void setNumbers(const int i, const int n);
 	void printPilot();
-	void writePilot(const std::string fileName, const int num, const int del);
+	void writePilot(const std::string fileName, const int num);
 	void readPilot(const std::string fileName, const int num);
 };
