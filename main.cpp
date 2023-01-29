@@ -1,98 +1,136 @@
 #include "pilot.h"
+#include "track.h"
+
 
 int getNumPilots(const std::string fileName);
+int getNumTracks(const std::string fileName);
 void writePilot(Pilot& _pilot);
+void writeTrack(Track& _track);
 
 int main() {
 	setlocale(LC_ALL, "ru");
 	std::string pathPilots = "pilots.dbf";
 	std::string pathPilotsTemp = "pilots.dbf.tmp";
-	//std::string pathTracks = "tracks.dbf";
-	//std::string pathTracksTemp = "tracks.dbf.tmp";
+	std::string pathTracks = "tracks.dbf";
+	std::string pathTracksTemp = "tracks.dbf.tmp";
 
 	int numberDelete{};
 	std::string pilotName;
 
-	Pilot *pilot = nullptr;
-	int size = getNumPilots(pathPilots);
+	Pilot* pilot = nullptr;
+	Track* track = nullptr;
+	int sizePilots = getNumPilots(pathPilots);
+	int sizeTracks = getNumTracks(pathTracks);
 
 	int menu{};
 	while (true) {
-		std::cout << "\n\t0 - выход\n\t1 - внести в базу пилота\n\t2 - удалить пилота\n\t3 - вывести базу пилотов" << std::endl;
+		std::cout << "\n\t0 - выход\n\t1 - пилоты\n\t2 - трассы" << std::endl;
 		std::cin >> menu;
-		if (menu >= 0 && menu <= 3) {
+		if (menu >= 0 && menu <= 2) {
 			if (menu == 0) { break; }
-			else if (menu == 1) { 
-				system("cls");
-				pilot = new Pilot;
-				writePilot(*pilot);
-				system("cls");
-				pilot->writePilot(pathPilots, ++size);
-				delete pilot;
-				pilot = nullptr;
-			}
-			else if (menu == 2) {
-				system("cls");
-				if (size < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
-				std::cout << "Введите номер пилота, которого нужно удалить(0 - отмена):" << std::endl;
-				for (int i = 1; i <= size; i++) {
-					pilot = new Pilot;
-					pilot->readPilot(pathPilots, i);
-					std::cout << i << " - " << pilot->getFullName() << std::endl;
-					delete pilot;
-					pilot = nullptr;
-				}
-				while (true)
-				{
-					std::cin >> numberDelete;
-					if (numberDelete == 0) { system("cls"); break; }
-					else if (numberDelete < 1 || numberDelete > size) { std::cout << "Неверно введен номер, введите еще раз:" << std::endl; continue; }
-					else {
-						pilot = new Pilot;
-						pilot->readPilot(pathPilots, numberDelete);
-						pilotName = pilot->getFullName();
-						delete pilot;
-						pilot = nullptr;
-						if (size > 1) {
-							for (int i = 1, j = 1; i <= size; i++) {
-								if (i != numberDelete) {
+			else if (menu == 1) {
+				while (true) {
+					std::cout << "\n\t0 - назад\n\t1 - внести в базу пилота\n\t2 - удалить пилота\n\t3 - вывести базу пилотов" << std::endl;
+					std::cin >> menu;
+					if (menu >= 0 && menu <= 3) {
+						if (menu == 0) { break; }
+						else if (menu == 1) {
+							system("cls");
+							pilot = new Pilot;
+							writePilot(*pilot);
+							system("cls");
+							if (pilot->writePilot(pathPilots, ++sizePilots)) { std::cout << "Пилот успешно занесен в базу!" << std::endl; }
+							else { std::cout << "Ошибка открытия файла '" << pathPilots << "'!" << std::endl; }
+							delete pilot;
+							pilot = nullptr;
+						}
+						else if (menu == 2) {
+							system("cls");
+							if (sizePilots < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
+							std::cout << "Введите номер пилота, которого нужно удалить(0 - отмена):" << std::endl;
+							for (int i = 1; i <= sizePilots; i++) {
+								pilot = new Pilot;
+								pilot->readPilot(pathPilots, i);
+								std::cout << i << " - " << pilot->getFullName() << std::endl;
+								delete pilot;
+								pilot = nullptr;
+							}
+							while (true)
+							{
+								std::cin >> numberDelete;
+								if (numberDelete == 0) { system("cls"); break; }
+								else if (numberDelete < 1 || numberDelete > sizePilots) { std::cout << "Неверно введен номер, введите еще раз:" << std::endl; continue; }
+								else {
 									pilot = new Pilot;
-									pilot->readPilot(pathPilots, i);
-									pilot->writePilot(pathPilotsTemp, j);
-									j++;
+									pilot->readPilot(pathPilots, numberDelete);
+									pilotName = pilot->getFullName();
 									delete pilot;
 									pilot = nullptr;
+									if (sizePilots > 1) {
+										for (int i = 1, j = 1; i <= sizePilots; i++) {
+											if (i != numberDelete) {
+												pilot = new Pilot;
+												pilot->readPilot(pathPilots, i);
+												if (pilot->writePilot(pathPilotsTemp, j)) { std::cout << "Пилот успешно занесен в базу!" << std::endl; }
+												else { std::cout << "Ошибка открытия файла '" << pathPilotsTemp << "'!" << std::endl; }
+												j++;
+												delete pilot;
+												pilot = nullptr;
+											}
+										}
+										remove(pathPilots.c_str());
+										if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { return 1; };
+									}
+									else {
+										std::fstream clear_file(pathPilots, std::fstream::out);
+										clear_file.close();
+									}
+									sizePilots = getNumPilots(pathPilots);
+									system("cls");
+									std::cout << pilotName << " удален из базы пилотов!" << std::endl;
+									pilotName = "";
+									numberDelete = 0;
+									break;
 								}
 							}
-							remove(pathPilots.c_str());
-							if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { return 1; };
 						}
-						else {
-							std::fstream clear_file(pathPilots, std::fstream::out);
-							clear_file.close();
+						else if (menu == 3) {
+							system("cls");
+							if (sizePilots < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
+							for (int i = 0; i < sizePilots; i++) {
+								pilot = new Pilot;
+								pilot->readPilot(pathPilots, i + 1);
+								pilot->printPilot();
+								delete pilot;
+								pilot = nullptr;
+							}
 						}
-						size = getNumPilots(pathPilots);
-						system("cls");
-						std::cout << pilotName << " удален из базы пилотов!" << std::endl;
-						pilotName = "";
-						numberDelete = 0;
-						break;
 					}
+					else { std::cout << "Неккоректная команда!" << std::endl; }
 				}
 			}
-			else if (menu == 3) {
-				system("cls");
-				if (size < 1) { std::cout << "В базе еще нет ни одного пилота!" << std::endl; continue; }
-				for (int i = 0; i < size; i++) {
-					pilot = new Pilot;
-					pilot->readPilot(pathPilots, i + 1);
-					pilot->printPilot();
-					delete pilot;
-					pilot = nullptr;
+			else if (menu == 2) {
+				while (true) {
+					std::cout << "\n\t0 - назад\n\t1 - внести в базу трассу\n\t2 - удалить трассу\n\t3 - вывести базу трасс" << std::endl;
+					std::cin >> menu;
+					if (menu >= 0 && menu <= 3) {
+						if (menu == 0) { break; }
+						else if (menu == 1) {
+							system("cls");
+							track = new Track;
+							writeTrack(*track);
+							system("cls");
+							if (track->writeTrack(pathTracks, ++sizeTracks)) { std::cout << "Трасса успешно занесена в базу!" << std::endl; }
+							else { std::cout << "Ошибка открытия файла '" << pathTracks << "'!" << std::endl; }
+							delete track;
+							track = nullptr;
+						}
+					}
+					else { std::cout << "Неккоректная команда!" << std::endl; }
 				}
 			}
+			else { std::cout << "Неккоректная команда!" << std::endl; }
 		}
-		else { std::cout << "Неккоректная команда!" << std::endl; }
 	}
 
 	return 0;
@@ -106,6 +144,23 @@ int getNumPilots(const std::string fileName) {
 	if (file.is_open()) {
 		while (file >> str) {
 			if (str == "[pilot]") { size++; }
+		}
+	}
+	else {
+		std::cout << "Ошибка открытия файла '" << fileName << "'!" << std::endl;
+	}
+	file.close();
+	return size;
+}
+
+int getNumTracks(const std::string fileName) {
+	int size{};
+	std::string str;
+	std::fstream file;
+	file.open(fileName, std::fstream::in);
+	if (file.is_open()) {
+		while (file >> str) {
+			if (str == "[track]") { size++; }
 		}
 	}
 	else {
@@ -206,4 +261,20 @@ void writePilot(Pilot& _pilot) {
 
 	Pilot pilot(name, surname, country, dayOfBirth, monthOfBirth, yearOfBirth, seasons, p_seasons, teams, p_teams, numbers, p_numbers);
 	_pilot = pilot;
+}
+
+void writeTrack(Track& _track) {
+	std::string name, country;
+
+	SetConsoleCP(1251);
+	std::cout << "Введите название трассы:" << std::endl;
+	std::cin.get();
+	std::getline(std::cin, name);
+
+	std::cout << "Введите страну трассы:" << std::endl;
+	std::getline(std::cin, country);
+	SetConsoleCP(866);
+
+	Track track(name, country);
+	_track = track;
 }

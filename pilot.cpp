@@ -1,10 +1,10 @@
 ﻿#include "pilot.h"
 
-Pilot::Pilot() :name{}, surname{}, country{}, dayOfBirth{}, monthOfBirth{}, yearOfBirth{},
-seasons{ 1 }, p_seasons{ new int[seasons] {} }, teams{ 1 }, p_teams{ new std::string[teams]{} }, numbers{ 1 }, p_numbers{ new int[numbers] {} } {}
+Pilot::Pilot() : name{}, surname{}, country{}, dayOfBirth{}, monthOfBirth{}, yearOfBirth{},
+	seasons{ 1 }, p_seasons{ new int[seasons] {} }, teams{ 1 }, p_teams{ new std::string[teams]{} }, numbers{ 1 }, p_numbers{ new int[numbers] {} } {}
 
 Pilot::Pilot(std::string _name, std::string _surname, std::string _country, int _dayOfBirth, int _monthOfBirth, int _yearOfBirth, 
-			int _seasons, int* _p_seasons, int _teams, std::string* _p_teams, int _numbers, int* _p_numbers) {
+	int _seasons, int* _p_seasons, int _teams, std::string* _p_teams, int _numbers, int* _p_numbers) {
 	name = _name;
 	surname = _surname;
 	country = _country;
@@ -130,7 +130,7 @@ void Pilot::printPilot() {
 	}
 }
 
-void Pilot::writePilot(const std::string fileName, const int num) {
+bool Pilot::writePilot(const std::string fileName, const int num) {
 	std::fstream file;
 	file.open(fileName, std::fstream::out | std::fstream::app);
 	if (file.is_open()) {
@@ -138,27 +138,25 @@ void Pilot::writePilot(const std::string fileName, const int num) {
 		file << name << '|';
 		file << surname << '|';
 		file << country << '|' << std::endl;
-		file << dayOfBirth << " ";
-		file << monthOfBirth << " ";
-		file << yearOfBirth << " ";
-		file << seasons << " ";
+		file << dayOfBirth << ' ';
+		file << monthOfBirth << ' ';
+		file << yearOfBirth << ' ';
+		file << seasons << ' ';
 		for (int i = 0; i < seasons; i++) {
-			file << p_seasons[i] << " ";
+			file << p_seasons[i] << ' ';
 		}
-		file << teams << " ";
+		file << teams << ' ';
 		for (int i = 0; i < teams; i++) {
 			file << p_teams[i] << '|';
 		}
-		file << numbers << " ";
+		file << numbers << ' ';
 		for (int i = 0; i < numbers; i++) {
-			file << p_numbers[i] << " ";
+			file << p_numbers[i] << ' ';
 		}
 		file << std::endl << std::endl;
-		std::cout << "Пилот успешно занесен в базу!" << std::endl;
+		return true;
 	}
-	else {
-		std::cout << "Ошибка открытия файла '" << fileName << "'!" << std::endl;
-	}
+	else { return false; }
 	file.close();
 }
 

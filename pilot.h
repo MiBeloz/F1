@@ -4,15 +4,8 @@
 #include <fstream>
 #include <Windows.h>
 
+
 class Pilot {
-private:
-	std::string name, surname, country;
-	int dayOfBirth, monthOfBirth, yearOfBirth;
-	int seasons, teams, numbers;
-	int* p_seasons;
-	std::string* p_teams;
-	int* p_numbers;
-	
 public:
 	Pilot();
 	Pilot(std::string _name, std::string _surname, std::string _country, int _dayOfBirth, int _monthOfBirth, int _yearOfBirth, 
@@ -41,6 +34,15 @@ public:
 
 	void printPilot();
 
-	void writePilot(const std::string fileName, const int num);
+	bool writePilot(const std::string fileName, const int num);
 	void readPilot(const std::string fileName, const int num);
+
+
+private:
+	std::string name, surname, country;
+	int dayOfBirth, monthOfBirth, yearOfBirth;
+	int seasons, teams, numbers;
+	int* p_seasons;
+	std::string* p_teams;
+	int* p_numbers;
 };

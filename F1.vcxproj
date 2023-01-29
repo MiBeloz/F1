@@ -130,10 +130,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pilot.cpp" />
     <ClCompile Include="track.cpp" />
+    <ClCompile Include="TrackVerison.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pilot.h" />
     <ClInclude Include="track.h" />
+    <ClInclude Include="TrackVerison.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
