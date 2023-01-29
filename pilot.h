@@ -35,7 +35,7 @@ public:
 	void printPilot();
 
 	bool writePilot(const std::string fileName, const int num);
-	void readPilot(const std::string fileName, const int num);
+	bool readPilot(const std::string fileName, const int num);
 
 
 private:

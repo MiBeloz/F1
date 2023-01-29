@@ -154,13 +154,13 @@ bool Pilot::writePilot(const std::string fileName, const int num) {
 			file << p_numbers[i] << ' ';
 		}
 		file << std::endl << std::endl;
-		return true;
+		return false;
 	}
-	else { return false; }
+	else { return true; }
 	file.close();
 }
 
-void Pilot::readPilot(const std::string fileName, const int num) {
+bool Pilot::readPilot(const std::string fileName, const int num) {
 	std::fstream file;
 	std::string str;
 	int _num{};
@@ -197,9 +197,8 @@ void Pilot::readPilot(const std::string fileName, const int num) {
 				}
 			}
 		}
+		return false;
 	}
-	else {
-		std::cout << "Не удалось считать данные!" << std::endl;
-	}
+	else { return true; }
 	file.close();
 }
