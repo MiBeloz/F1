@@ -8,7 +8,22 @@ Track::Track(std::string _name, std::string _country) {
 	versions = 0;
 }
 
+Track& Track::operator=(Track& _track) {
+	name = _track.name;
+	country = _track.country;
+	versions = _track.versions;
+	return *this;
+}
+
 std::string Track::getName() { return name; }
+
+int Track::getVersions() {
+	return versions;
+}
+
+void Track::setVersions(const int i) {
+	versions = i;
+}
 
 void Track::printTrack() {
 	std::cout << "Трасса: " << name << std::endl;

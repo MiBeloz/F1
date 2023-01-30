@@ -6,9 +6,14 @@
 class TrackVersion : public Track {
 public:
 	TrackVersion();
+	TrackVersion(std::string _versionName, int _years, int* _p_years, int _turns, double _length, double _recordQ, double _recordR,
+		std::string _pilotRecordQ, std::string _pilotRecordR, std::string _teamRecordQ, std::string _teamRecordR, int _yearRecordQ, int _yearRecordR);
 	~TrackVersion();
 
-	bool writeTrack(const std::string, const int);
+	TrackVersion& operator=(TrackVersion& _trackVersion);
+
+	bool writeTrackVersion(const std::string fileName, const int vers);
+	bool readTrackVersion(const std::string fileName);
 
 private:
 	std::string versionName;

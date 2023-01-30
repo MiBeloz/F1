@@ -176,11 +176,13 @@ bool Pilot::readPilot(const std::string fileName, const int num) {
 					std::getline(file, country, '|');
 					file >> dayOfBirth >> monthOfBirth >> yearOfBirth;
 					file >> seasons;
+					delete[] p_seasons;
 					p_seasons = new int[seasons];
 					for (int i = 0; i < seasons; i++) {
 						file >> p_seasons[i];
 					}
 					file >> teams;
+					delete[] p_teams;
 					p_teams = new std::string[teams];
 					for (int i = 0; i < teams; i++) {
 						std::getline(file, p_teams[i], '|');
@@ -189,6 +191,7 @@ bool Pilot::readPilot(const std::string fileName, const int num) {
 						}
 					}
 					file >> numbers;
+					delete[] p_numbers;
 					p_numbers = new int[numbers];
 					for (int i = 0; i < numbers; i++) {
 						file >> p_numbers[i];

@@ -1,18 +1,23 @@
 #include "pilot.h"
 #include "track.h"
+#include "trackVerison.h"
+
 
 
 int getNumPilots(const std::string fileName);
 int getNumTracks(const std::string fileName);
 void writePilot(Pilot& _pilot);
 void writeTrack(Track& _track);
+void writeTrackVersion(TrackVersion& _trackVersion);
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	std::string pathPilots = "pilots.dbf";
+	std::string pathPilots = //"pilots.dbf";
+	"pilots.txt";
 	std::string pathPilotsTemp = "pilots.dbf.tmp";
-	std::string pathTracks = "tracks.dbf";
-	std::string pathTracksTemp = "tracks.dbf.tmp";
+	std::string pathTracks = //"tracks.dbf";
+	"tracks.txt";
+	std::string pathTracksTemp = "tracks.dbf.txt";
 
 	int numberDelete{};
 	int numberAdd{};
@@ -21,6 +26,8 @@ int main() {
 
 	Pilot* pilot = nullptr;
 	Track* track = nullptr;
+	TrackVersion* trackVersion = nullptr;
+	TrackVersion* trackVersionAdd = nullptr;
 	int sizePilots = getNumPilots(pathPilots);
 	int sizeTracks = getNumTracks(pathTracks);
 
@@ -133,7 +140,7 @@ int main() {
 						}
 						else if (menu == 2) {
 
-							//--------------------------------------------------------------------------------------------------------
+							//------------------------------------------------------------------------------------------------------------
 
 							system("cls");
 							if (sizeTracks < 1) { std::cout << "В базе еще нет ни одной трассы!" << std::endl; continue; }
@@ -151,35 +158,48 @@ int main() {
 								if (numberAdd == 0) { system("cls"); break; }
 								else if (numberAdd < 1 || numberAdd > sizeTracks) { std::cout << "Неверно введен номер, введите еще раз:" << std::endl; continue; }
 								else {
-									track = new Track;
-									if (track->readTrack(pathTracks, numberAdd)) { std::cout << "Не удалось считать данные!" << std::endl; }
-									else { trackName = track->getName(); }
-									delete track;
-									track = nullptr;
-									if (sizeTracks > 1) {
-										for (int i = 1, j = 1; i <= sizeTracks; i++) {
-											if (i != numberAdd) {
-												track = new Track;
-												if (track->readTrack(pathTracks, i)) { std::cout << "Ошибка открытия файла '" << pathTracksTemp << "'!" << std::endl; }
-												else {
-													if (track->writeTrack(pathTracksTemp, j)) { std::cout << "Ошибка открытия файла '" << pathTracksTemp << "'!" << std::endl; }
-													else { std::cout << "Трасса успешно занесена в базу!" << std::endl; }
-												}
-												j++;
-												delete track;
-												track = nullptr;
-											}
-										}
-										if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
-										if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
-									}
-									else {
-										std::fstream clear_file(pathTracks, std::fstream::out);
-										clear_file.close();
-									}
-									sizeTracks = getNumTracks(pathTracks);
 									system("cls");
-									std::cout << "Трасса '" << trackName << "' удалена из базы трасс!" << std::endl;
+									trackVersionAdd = new TrackVersion;
+									writeTrackVersion(*trackVersionAdd);
+									for (int i = 1; i <= sizeTracks; i++) {
+										if (numberAdd != i) {
+											trackVersion = new TrackVersion;
+											trackVersion->readTrack(pathTracks, i);
+											trackVersion->writeTrack(pathTracksTemp, i);
+											for (int i = 1; i <= trackVersion->getVersions(); i++) {
+												trackVersion->readTrack(pathTracks, i);
+												trackVersion->writeTrackVersion(pathTracksTemp, i);
+											}
+											delete trackVersion;
+											trackVersion = nullptr;
+										}
+										else {
+											trackVersion = new TrackVersion;
+											trackVersion->readTrack(pathTracks, i);
+											trackName = trackVersion->getName();
+											trackVersion->setVersions(trackVersion->getVersions() + 1);
+											trackVersion->writeTrack(pathTracksTemp, i);
+											for (int i = 1; i <= trackVersion->getVersions(); i++) {
+												if (i < trackVersion->getVersions()) {
+													trackVersion->readTrack(pathTracks, i);
+													trackVersion->writeTrackVersion(pathTracksTemp, i);
+												}
+												else {
+													*trackVersion = *trackVersionAdd;   //--------------
+													delete trackVersionAdd;
+													trackVersionAdd = nullptr;
+													trackVersion->writeTrackVersion(pathTracksTemp, i);
+												}
+											}
+											delete trackVersion;
+											trackVersion = nullptr;
+										}
+									}
+									if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
+									if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
+									//sizeTracks = getNumTracks(pathTracks);
+									system("cls");
+									std::cout << "К трассе '" << trackName << "' добавлена новая конфигурация!" << std::endl;
 									trackName = "";
 									numberAdd = 0;
 									break;
@@ -405,4 +425,67 @@ void writeTrack(Track& _track) {
 
 	Track track(name, country);
 	_track = track;
+}
+
+void writeTrackVersion(TrackVersion& _trackVersion) {
+	std::string versionName, pilotRecordQ, pilotRecordR, teamRecordQ, teamRecordR;
+	int years{}, turns{}, yearRecordQ{}, yearRecordR{};
+	double length{}, recordQ{}, recordR{};
+	int* p_years = nullptr;
+
+	SetConsoleCP(1251);
+	std::cout << "Введите название трассы в этой конфигурации:" << std::endl;
+	std::cin.get();
+	std::getline(std::cin, versionName);
+
+	std::cout << "Введите сколько лет трасса была в этой конфигурации:" << std::endl;
+	std::cin >> years;
+
+	p_years = new int[years];
+	for (int i = 0; i < years; i++) {
+		std::cout << "Введите год №" << i + 1 << ":" << std::endl;
+		while (true) {
+			std::cin >> p_years[i];
+			if (p_years[i] < 1950 || p_years[i] > 2024) { std::cout << "Год должен быть не меньше 1950 и не больше 2024! Введите еще раз:" << std::endl; }
+			else { break; }
+		}
+	}
+
+	std::cout << "Введите количество поворотов в этой конфигурации:" << std::endl;
+	std::cin >> turns;
+
+	std::cout << "Введите дилину круга в метрах в этой конфигурации:" << std::endl;
+	std::cin >> length;
+
+	std::cout << "Введите рекорд круга в квалификации в этой конфигурации:" << std::endl;
+	std::cin >> recordQ;
+
+	std::cout << "Введите год рекорда круга в квалификации в этой конфигурации:" << std::endl;
+	std::cin >> yearRecordQ;
+
+	std::cout << "Введите имя пилота рекорда круга в квалификации в этой конфигурации:" << std::endl;
+	std::cin.get();
+	std::getline(std::cin, pilotRecordQ);
+
+	std::cout << "Введите название команды рекорда круга в квалификации в этой конфигурации:" << std::endl;
+	//std::cin.get();
+	std::getline(std::cin, teamRecordQ);
+
+	std::cout << "Введите рекорд круга в гонке в этой конфигурации:" << std::endl;
+	std::cin >> recordR;
+
+	std::cout << "Введите год рекорда круга в гонке в этой конфигурации:" << std::endl;
+	std::cin >> yearRecordR;
+
+	std::cout << "Введите имя пилота рекорда круга в гонке в этой конфигурации:" << std::endl;
+	std::cin.get();
+	std::getline(std::cin, pilotRecordR);
+
+	std::cout << "Введите название команды рекорда круга в гонке в этой конфигурации:" << std::endl;
+	//std::cin.get();
+	std::getline(std::cin, teamRecordR);
+	SetConsoleCP(866);
+
+	TrackVersion trackVersion(versionName, years, p_years, turns, length, recordQ, recordR, pilotRecordQ, pilotRecordR, teamRecordQ, teamRecordR, yearRecordQ, yearRecordR);
+	_trackVersion = trackVersion;
 }
