@@ -167,7 +167,7 @@ int main() {
 											trackVersion->readTrack(pathTracks, i);
 											trackVersion->writeTrack(pathTracksTemp, i);
 											for (int j = 1; j <= trackVersion->getVersions(); j++) {
-												trackVersion->readTrack(pathTracks, j);
+												trackVersion->readTrackVersion(pathTracks, j);
 												trackVersion->writeTrackVersion(pathTracksTemp, j);
 											}
 											delete trackVersion;
@@ -181,7 +181,7 @@ int main() {
 											trackVersion->writeTrack(pathTracksTemp, i);
 											for (int j = 1; j <= trackVersion->getVersions(); j++) {
 												if (j < trackVersion->getVersions()) {
-													trackVersion->readTrack(pathTracks, j);
+													trackVersion->readTrackVersion(pathTracks, j);
 													trackVersion->writeTrackVersion(pathTracksTemp, j);
 												}
 												else {

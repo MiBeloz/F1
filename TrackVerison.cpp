@@ -71,7 +71,7 @@ bool TrackVersion::writeTrackVersion(const std::string fileName, const int vers)
 	file.close();
 }
 
-bool TrackVersion::readTrackVersion(const std::string fileName) {
+bool TrackVersion::readTrackVersion(const std::string fileName, const int vers) {
 	std::fstream file;
 	std::string str;
 	int _vers{};
@@ -80,7 +80,7 @@ bool TrackVersion::readTrackVersion(const std::string fileName) {
 		while (file >> str) {
 			if (str == "[" + name + "]") {
 				file >> _vers;
-				if (_vers == versions) {
+				if (_vers == vers) {
 					std::getline(file, str, '|');
 					versionName = str.substr(1);
 					std::getline(file, pilotRecordQ, '|');

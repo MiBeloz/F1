@@ -13,7 +13,7 @@ public:
 	TrackVersion& operator=(TrackVersion& _trackVersion);
 
 	bool writeTrackVersion(const std::string fileName, const int vers);
-	bool readTrackVersion(const std::string fileName);
+	bool readTrackVersion(const std::string fileName, const int vers);
 
 private:
 	std::string versionName;
