@@ -166,9 +166,9 @@ int main() {
 											trackVersion = new TrackVersion;
 											trackVersion->readTrack(pathTracks, i);
 											trackVersion->writeTrack(pathTracksTemp, i);
-											for (int i = 1; i <= trackVersion->getVersions(); i++) {
-												trackVersion->readTrack(pathTracks, i);
-												trackVersion->writeTrackVersion(pathTracksTemp, i);
+											for (int j = 1; j <= trackVersion->getVersions(); j++) {
+												trackVersion->readTrack(pathTracks, j);
+												trackVersion->writeTrackVersion(pathTracksTemp, j);
 											}
 											delete trackVersion;
 											trackVersion = nullptr;
@@ -179,16 +179,16 @@ int main() {
 											trackName = trackVersion->getName();
 											trackVersion->setVersions(trackVersion->getVersions() + 1);
 											trackVersion->writeTrack(pathTracksTemp, i);
-											for (int i = 1; i <= trackVersion->getVersions(); i++) {
-												if (i < trackVersion->getVersions()) {
-													trackVersion->readTrack(pathTracks, i);
-													trackVersion->writeTrackVersion(pathTracksTemp, i);
+											for (int j = 1; j <= trackVersion->getVersions(); j++) {
+												if (j < trackVersion->getVersions()) {
+													trackVersion->readTrack(pathTracks, j);
+													trackVersion->writeTrackVersion(pathTracksTemp, j);
 												}
 												else {
-													*trackVersion = *trackVersionAdd;   //--------------
+													*trackVersion = *trackVersionAdd;
 													delete trackVersionAdd;
 													trackVersionAdd = nullptr;
-													trackVersion->writeTrackVersion(pathTracksTemp, i);
+													trackVersion->writeTrackVersion(pathTracksTemp, j);
 												}
 											}
 											delete trackVersion;
@@ -197,7 +197,6 @@ int main() {
 									}
 									if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
 									if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
-									//sizeTracks = getNumTracks(pathTracks);
 									system("cls");
 									std::cout << "К трассе '" << trackName << "' добавлена новая конфигурация!" << std::endl;
 									trackName = "";
@@ -468,7 +467,6 @@ void writeTrackVersion(TrackVersion& _trackVersion) {
 	std::getline(std::cin, pilotRecordQ);
 
 	std::cout << "Введите название команды рекорда круга в квалификации в этой конфигурации:" << std::endl;
-	//std::cin.get();
 	std::getline(std::cin, teamRecordQ);
 
 	std::cout << "Введите рекорд круга в гонке в этой конфигурации:" << std::endl;
@@ -482,7 +480,6 @@ void writeTrackVersion(TrackVersion& _trackVersion) {
 	std::getline(std::cin, pilotRecordR);
 
 	std::cout << "Введите название команды рекорда круга в гонке в этой конфигурации:" << std::endl;
-	//std::cin.get();
 	std::getline(std::cin, teamRecordR);
 	SetConsoleCP(866);
 
