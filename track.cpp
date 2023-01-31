@@ -40,10 +40,10 @@ bool Track::writeTrack(const std::string fileName, const int num) {
 		file << country << '|' << std::endl;
 		file << versions;
 		file << std::endl << std::endl;
-		return false;
 	}
 	else { return true; }
 	file.close();
+	return false;
 }
 
 bool Track::readTrack(const std::string fileName, const int num) {
@@ -64,9 +64,9 @@ bool Track::readTrack(const std::string fileName, const int num) {
 				}
 			}
 		}
-		return false;
 	}
 	else { return true; }
 	file.close();
+	return false;
 }
 

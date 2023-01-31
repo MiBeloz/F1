@@ -139,9 +139,6 @@ int main() {
 							track = nullptr;
 						}
 						else if (menu == 2) {
-
-							//------------------------------------------------------------------------------------------------------------
-
 							system("cls");
 							if (sizeTracks < 1) { std::cout << "В базе еще нет ни одной трассы!" << std::endl; continue; }
 							std::cout << "Введите номер трассы, которой нужно добавить конфигурацию(0 - отмена):" << std::endl;
@@ -164,7 +161,10 @@ int main() {
 									for (int i = 1; i <= sizeTracks; i++) {
 										if (numberAdd != i) {
 											trackVersion = new TrackVersion;
-											trackVersion->readTrack(pathTracks, i);
+											if (trackVersion->readTrack(pathTracks, i)) { 
+												std::cout << "Не удалось считать данные!" << std::endl;
+												throw "error: readTrack";
+											}
 											trackVersion->writeTrack(pathTracksTemp, i);
 											for (int j = 1; j <= trackVersion->getVersions(); j++) {
 												trackVersion->readTrackVersion(pathTracks, j);
@@ -204,9 +204,6 @@ int main() {
 									break;
 								}
 							}
-
-							//--------------------------------------------------------------------------------------------------------
-
 						}
 						else if (menu == 3) {
 							system("cls");

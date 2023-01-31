@@ -65,10 +65,10 @@ bool TrackVersion::writeTrackVersion(const std::string fileName, const int vers)
 			file << p_years[i] << ' ';
 		}
 		file << std::endl << std::endl;
-		return true;
 	}
-	else { return false; }
+	else { return true; }
 	file.close();
+	return false;
 }
 
 bool TrackVersion::readTrackVersion(const std::string fileName, const int vers) {
@@ -103,7 +103,8 @@ bool TrackVersion::readTrackVersion(const std::string fileName, const int vers) 
 				}
 			}
 		}
-		return true;
 	}
-	else { return false; }
+	else { return true; }
+	file.close();
+	return false;
 }

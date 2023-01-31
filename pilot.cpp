@@ -154,10 +154,10 @@ bool Pilot::writePilot(const std::string fileName, const int num) {
 			file << p_numbers[i] << ' ';
 		}
 		file << std::endl << std::endl;
-		return false;
 	}
 	else { return true; }
 	file.close();
+	return false;
 }
 
 bool Pilot::readPilot(const std::string fileName, const int num) {
@@ -200,8 +200,8 @@ bool Pilot::readPilot(const std::string fileName, const int num) {
 				}
 			}
 		}
-		return false;
 	}
 	else { return true; }
 	file.close();
+	return false;
 }
