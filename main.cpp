@@ -1,316 +1,522 @@
-#include "pilot.h"
-#include "track.h"
-#include "trackVerison.h"
+ï»¿#include "main.h"
 
 
-
-int getNumPilots(const std::string fileName);
-int getNumTracks(const std::string fileName);
-void writePilot(Pilot& _pilot);
-void writeTrack(Track& _track);
-void writeTrackVersion(TrackVersion& _trackVersion);
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	std::string pathPilots = //"pilots.dbf";
-	"pilots.txt";
-	std::string pathPilotsTemp = "pilots.dbf.tmp";
-	std::string pathTracks = //"tracks.dbf";
-	"tracks.txt";
-	std::string pathTracksTemp = "tracks.dbf.txt";
-
-	int numberDelete{};
-	int numberAdd{};
-	std::string pilotName;
-	std::string trackName;
-
-	Pilot* pilot = nullptr;
-	Track* track = nullptr;
-	TrackVersion* trackVersion = nullptr;
-	TrackVersion* trackVersionAdd = nullptr;
-	int sizePilots = getNumPilots(pathPilots);
-	int sizeTracks = getNumTracks(pathTracks);
-
-	int menu{};
+	
+	MainMenu menu;
+	int select{};
 	while (true) {
-		std::cout << "\n\t0 - âûõîä\n\t1 - ïèëîòû\n\t2 - òðàññû" << std::endl;
-		std::cin >> menu;
-		if (menu >= 0 && menu <= 2) {
-			if (menu == 0) { break; }
-			else if (menu == 1) {
-				system("cls");
-				while (true) {
-					std::cout << "\n\t0 - íàçàä\n\t1 - âíåñòè â áàçó ïèëîòà\n\t2 - óäàëèòü ïèëîòà\n\t3 - âûâåñòè áàçó ïèëîòîâ" << std::endl;
-					std::cin >> menu;
-					if (menu >= 0 && menu <= 3) {
-						if (menu == 0) { system("cls"); break; }
-						else if (menu == 1) {
-							system("cls");
-							pilot = new Pilot;
-							writePilot(*pilot);
-							system("cls");
-							if (pilot->writePilot(pathPilots, ++sizePilots)) { std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << pathPilots << "'!" << std::endl; }
-							else { std::cout << "Ïèëîò óñïåøíî çàíåñåí â áàçó!" << std::endl; }
-							delete pilot;
-							pilot = nullptr;
-						}
-						else if (menu == 2) {
-							system("cls");
-							if (sizePilots < 1) { std::cout << "Â áàçå åùå íåò íè îäíîãî ïèëîòà!" << std::endl; continue; }
-							std::cout << "Ââåäèòå íîìåð ïèëîòà, êîòîðîãî íóæíî óäàëèòü(0 - îòìåíà):" << std::endl;
-							for (int i = 1; i <= sizePilots; i++) {
-								pilot = new Pilot;
-								if (pilot->readPilot(pathPilots, i)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-								else { std::cout << i << " - " << pilot->getFullName() << std::endl; }
-								delete pilot;
-								pilot = nullptr;
-							}
-							while (true)
-							{
-								std::cin >> numberDelete;
-								if (numberDelete == 0) { system("cls"); break; }
-								else if (numberDelete < 1 || numberDelete > sizePilots) { std::cout << "Íåâåðíî ââåäåí íîìåð, ââåäèòå åùå ðàç:" << std::endl; continue; }
-								else {
-									pilot = new Pilot;
-									if (pilot->readPilot(pathPilots, numberDelete)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-									else { pilotName = pilot->getFullName(); }
-									delete pilot;
-									pilot = nullptr;
-									if (sizePilots > 1) {
-										for (int i = 1, j = 1; i <= sizePilots; i++) {
-											if (i != numberDelete) {
-												pilot = new Pilot;
-												if (pilot->readPilot(pathPilots, i)) { std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << pathPilotsTemp << "'!" << std::endl; }
-												else {
-													if (pilot->writePilot(pathPilotsTemp, j)) { std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << pathPilotsTemp << "'!" << std::endl; }
-													else { std::cout << "Ïèëîò óñïåøíî çàíåñåí â áàçó!" << std::endl; }
-												}
-												j++;
-												delete pilot;
-												pilot = nullptr;
-											}
-										}
-										if (remove(pathPilots.c_str())) { throw "error 1: remove"; }
-										if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { throw "error 2: rename"; }
-									}
-									else {
-										std::fstream clear_file(pathPilots, std::fstream::out);
-										clear_file.close();
-									}
-									sizePilots = getNumPilots(pathPilots);
-									system("cls");
-									std::cout << pilotName << " óäàëåí èç áàçû ïèëîòîâ!" << std::endl;
-									pilotName = "";
-									numberDelete = 0;
-									break;
-								}
-							}
-						}
-						else if (menu == 3) {
-							system("cls");
-							if (sizePilots < 1) { std::cout << "Â áàçå åùå íåò íè îäíîãî ïèëîòà!" << std::endl; continue; }
-							for (int i = 0; i < sizePilots; i++) {
-								pilot = new Pilot;
-								if (pilot->readPilot(pathPilots, i + 1)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-								else { pilot->printPilot(); }
-								delete pilot;
-								pilot = nullptr;
-							}
-						}
-					}
-					else { system("cls"); std::cout << "Íåêêîðåêòíàÿ êîìàíäà!" << std::endl; }
-				}
+		std::cout <<
+			"\n\t0 - Ð²Ñ‹Ñ…Ð¾Ð´"
+			"\n\t1 - Ð¿Ð¸Ð»Ð¾Ñ‚Ñ‹"
+			"\n\t2 - Ñ‚Ñ€Ð°ÑÑÑ‹" << std::endl;
+		std::cin >> select;
+		menu = static_cast<MainMenu>(select);
+
+		if (menu >= MainMenu::Ð²Ñ‹Ñ…Ð¾Ð´ && menu <= MainMenu::Ñ‚Ñ€Ð°ÑÑÑ‹) {
+			if (menu == MainMenu::Ð²Ñ‹Ñ…Ð¾Ð´) { 
+				break; 
 			}
-			else if (menu == 2) {
-				system("cls");
-				while (true) {
-					std::cout << "\n\t0 - íàçàä\n\t1 - âíåñòè â áàçó òðàññó\n\t2 - âíåñòè êîíôèãóðàöèþ òðàññû\n\t3 - óäàëèòü òðàññó\n\t4 - âûâåñòè áàçó òðàññ" << std::endl;
-					std::cin >> menu;
-					if (menu >= 0 && menu <= 4) {
-						if (menu == 0) { system("cls"); break; }
-						else if (menu == 1) {
-							system("cls");
-							track = new Track;
-							writeTrack(*track);
-							system("cls");
-							if (track->writeTrack(pathTracks, ++sizeTracks)) { std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << pathTracks << "'!" << std::endl; }
-							else { std::cout << "Òðàññà óñïåøíî çàíåñåíà â áàçó!" << std::endl; }
-							delete track;
-							track = nullptr;
-						}
-						else if (menu == 2) {
-							system("cls");
-							if (sizeTracks < 1) { std::cout << "Â áàçå åùå íåò íè îäíîé òðàññû!" << std::endl; continue; }
-							std::cout << "Ââåäèòå íîìåð òðàññû, êîòîðîé íóæíî äîáàâèòü êîíôèãóðàöèþ(0 - îòìåíà):" << std::endl;
-							for (int i = 1; i <= sizeTracks; i++) {
-								track = new Track;
-								if (track->readTrack(pathTracks, i)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-								else { std::cout << i << " - " << track->getName() << std::endl; }
-								delete track;
-								track = nullptr;
-							}
-							while (true)
-							{
-								std::cin >> numberAdd;
-								if (numberAdd == 0) { system("cls"); break; }
-								else if (numberAdd < 1 || numberAdd > sizeTracks) { std::cout << "Íåâåðíî ââåäåí íîìåð, ââåäèòå åùå ðàç:" << std::endl; continue; }
-								else {
-									system("cls");
-									trackVersionAdd = new TrackVersion;
-									writeTrackVersion(*trackVersionAdd);
-									for (int i = 1; i <= sizeTracks; i++) {
-										if (numberAdd != i) {
-											trackVersion = new TrackVersion;
-											if (trackVersion->readTrack(pathTracks, i)) { 
-												std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl;
-												throw "error: readTrack";
-											}
-											trackVersion->writeTrack(pathTracksTemp, i);
-											for (int j = 1; j <= trackVersion->getVersions(); j++) {
-												trackVersion->readTrackVersion(pathTracks, j);
-												trackVersion->writeTrackVersion(pathTracksTemp, j);
-											}
-											delete trackVersion;
-											trackVersion = nullptr;
-										}
-										else {
-											trackVersion = new TrackVersion;
-											trackVersion->readTrack(pathTracks, i);
-											trackName = trackVersion->getName();
-											trackVersion->setVersions(trackVersion->getVersions() + 1);
-											trackVersion->writeTrack(pathTracksTemp, i);
-											for (int j = 1; j <= trackVersion->getVersions(); j++) {
-												if (j < trackVersion->getVersions()) {
-													trackVersion->readTrackVersion(pathTracks, j);
-													trackVersion->writeTrackVersion(pathTracksTemp, j);
-												}
-												else {
-													*trackVersion = *trackVersionAdd;
-													delete trackVersionAdd;
-													trackVersionAdd = nullptr;
-													trackVersion->writeTrackVersion(pathTracksTemp, j);
-												}
-											}
-											delete trackVersion;
-											trackVersion = nullptr;
-										}
-									}
-									if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
-									if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
-									system("cls");
-									std::cout << "Ê òðàññå '" << trackName << "' äîáàâëåíà íîâàÿ êîíôèãóðàöèÿ!" << std::endl;
-									trackName = "";
-									numberAdd = 0;
-									break;
-								}
-							}
-						}
-						else if (menu == 3) {
-							system("cls");
-							if (sizeTracks < 1) { std::cout << "Â áàçå åùå íåò íè îäíîé òðàññû!" << std::endl; continue; }
-							std::cout << "Ââåäèòå íîìåð òðàññû, êîòîðóþ íóæíî óäàëèòü(0 - îòìåíà):" << std::endl;
-							for (int i = 1; i <= sizeTracks; i++) {
-								track = new Track;
-								if (track->readTrack(pathTracks, i)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-								else { std::cout << i << " - " << track->getName() << std::endl; }
-								delete track;
-								track = nullptr;
-							}
-							while (true)
-							{
-								std::cin >> numberAdd;
-								if (numberAdd == 0) { system("cls"); break; }
-								else if (numberAdd < 1 || numberAdd > sizeTracks) { std::cout << "Íåâåðíî ââåäåí íîìåð, ââåäèòå åùå ðàç:" << std::endl; continue; }
-								else {
-									track = new Track;
-									if (track->readTrack(pathTracks, numberAdd)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-									else { trackName = track->getName(); }
-									delete track;
-									track = nullptr;
-									if (sizeTracks > 1) {
-										for (int i = 1, j = 1; i <= sizeTracks; i++) {
-											if (i != numberAdd) {
-												track = new Track;
-												if (track->readTrack(pathTracks, i)) { std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << pathTracksTemp << "'!" << std::endl; }
-												else {
-													if (track->writeTrack(pathTracksTemp, j)) { std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << pathTracksTemp << "'!" << std::endl; }
-													else { std::cout << "Òðàññà óñïåøíî çàíåñåíà â áàçó!" << std::endl; }
-												}
-												j++;
-												delete track;
-												track = nullptr;
-											}
-										}
-										if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
-										if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
-									}
-									else {
-										std::fstream clear_file(pathTracks, std::fstream::out);
-										clear_file.close();
-									}
-									sizeTracks = getNumTracks(pathTracks);
-									system("cls");
-									std::cout << "Òðàññà '" << trackName << "' óäàëåíà èç áàçû òðàññ!" << std::endl;
-									trackName = "";
-									numberAdd = 0;
-									break;
-								}
-							}
-						}
-						else if (menu == 4) {
-							system("cls");
-							if (sizeTracks < 1) { std::cout << "Â áàçå åùå íåò íè îäíîé òðàññû!" << std::endl; continue; }
-							for (int i = 0; i < sizeTracks; i++) {
-								track = new Track;
-								if (track->readTrack(pathTracks, i + 1)) { std::cout << "Íå óäàëîñü ñ÷èòàòü äàííûå!" << std::endl; }
-								track->printTrack();
-								delete track;
-								track = nullptr;
-							}
-						}
-					}
-					else { system("cls"); std::cout << "Íåêêîðåêòíàÿ êîìàíäà!" << std::endl; }
-				}
+			else if (menu == MainMenu::Ð¿Ð¸Ð»Ð¾Ñ‚Ñ‹) {
+				menuPilot();
 			}
-			else { system("cls"); std::cout << "Íåêêîðåêòíàÿ êîìàíäà!" << std::endl; }
+			else if (menu == MainMenu::Ñ‚Ñ€Ð°ÑÑÑ‹) {
+				menuTrack();
+			}
 		}
-		else { system("cls"); std::cout << "Íåêêîðåêòíàÿ êîìàíäà!" << std::endl; }
+		else { 
+			system("cls");
+			std::cout << "ÐÐµÐºÐºÐ¾Ñ€ÐµÐºÑ‚Ð½Ð°Ñ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð°!" << std::endl;
+		}
 	}
 
 	return 0;
 }
 
-int getNumPilots(const std::string fileName) {
+void menuPilot() {
+	system("cls");
+
+	Pilot* pilot = nullptr;
+	int sizePilots{};
+
+	MenuPilot menu;
+	int select{};
+	while (true) {
+		std::cout << 
+			"\n\t0 - Ð½Ð°Ð·Ð°Ð´"
+			"\n\t1 - Ð²Ð½ÐµÑÑ‚Ð¸ Ð² Ð±Ð°Ð·Ñƒ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°"
+			"\n\t2 - ÑƒÐ´Ð°Ð»Ð¸Ñ‚ÑŒ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°"
+			"\n\t3 - Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸ Ð±Ð°Ð·Ñƒ Ð¿Ð¸Ð»Ð¾Ñ‚Ð¾Ð²" << std::endl;
+		std::cin >> select;
+		menu = static_cast<MenuPilot>(select);
+
+		if (menu >= MenuPilot::Ð½Ð°Ð·Ð°Ð´ && menu <= MenuPilot::Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸_Ð±Ð°Ð·Ñƒ_Ð¿Ð¸Ð»Ð¾Ñ‚Ð¾Ð²) { 
+			break;
+		}
+		else {
+			system("cls");
+			std::cout << "ÐÐµÐºÐºÐ¾Ñ€ÐµÐºÑ‚Ð½Ð°Ñ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð°!" << std::endl;
+		}
+	}
+
+	if (menu == MenuPilot::Ð½Ð°Ð·Ð°Ð´) { 
+		system("cls"); 
+		return; 
+	}
+	else if (menu == MenuPilot::Ð²Ð½ÐµÑÑ‚Ð¸_Ð²_Ð±Ð°Ð·Ñƒ_Ð¿Ð¸Ð»Ð¾Ñ‚Ð°) {
+		system("cls");
+
+		pilot = new Pilot;
+
+		writePilot(*pilot);
+
+		sizePilots = getNumPilots();
+
+		system("cls");
+
+		if (pilot->writePilot(pathPilots, ++sizePilots)) {
+			std::cout << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° '" << pathPilots << "'!" << std::endl;
+		}
+		else { 
+			std::cout << "ÐŸÐ¸Ð»Ð¾Ñ‚ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð½ÐµÑÐµÐ½ Ð² Ð±Ð°Ð·Ñƒ!" << std::endl; 
+		}
+
+		delete pilot;
+		pilot = nullptr;
+	}
+
+	else if (menu == MenuPilot::ÑƒÐ´Ð°Ð»Ð¸Ñ‚ÑŒ_Ð¿Ð¸Ð»Ð¾Ñ‚Ð°) {
+		sizePilots = getNumPilots();
+
+		system("cls");
+
+		if (sizePilots < 1) { 
+			std::cout << "Ð’ Ð±Ð°Ð·Ðµ ÐµÑ‰Ðµ Ð½ÐµÑ‚ Ð½Ð¸ Ð¾Ð´Ð½Ð¾Ð³Ð¾ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°!" << std::endl; 
+		}
+		else {
+			std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°, ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð³Ð¾ Ð½ÑƒÐ¶Ð½Ð¾ ÑƒÐ´Ð°Ð»Ð¸Ñ‚ÑŒ(0 - Ð¾Ñ‚Ð¼ÐµÐ½Ð°):" << std::endl;
+			for (int i = 1; i <= sizePilots; i++) {
+				pilot = new Pilot;
+
+				if (pilot->readPilot(pathPilots, i)) { 
+					std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl;
+				}
+				else { 
+					std::cout << i << " - " << pilot->getFullName() << std::endl;
+				}
+
+				delete pilot;
+				pilot = nullptr;
+			}
+
+			std::string pilotName;
+			int numberDelete{};
+			while (true)
+			{
+				std::cin >> numberDelete;
+
+				if (numberDelete == 0) { 
+					system("cls");
+					break; 
+				}
+				else if (numberDelete < 1 || numberDelete > sizePilots) { 
+					std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ð¾ Ð²Ð²ÐµÐ´ÐµÐ½ Ð½Ð¾Ð¼ÐµÑ€, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl; 
+				}
+				else {
+					pilot = new Pilot;
+
+					if (pilot->readPilot(pathPilots, numberDelete)) {
+						std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl; 
+					}
+					else { 
+						pilotName = pilot->getFullName();
+					}
+
+					delete pilot;
+					pilot = nullptr;
+
+					if (sizePilots > 1) {
+						for (int i = 1, j = 1; i <= sizePilots; i++) {
+							if (i != numberDelete) {
+								pilot = new Pilot;
+
+								if (pilot->readPilot(pathPilots, i)) {
+									std::cout << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° '" << pathPilotsTemp << "'!" << std::endl;
+								}
+								else {
+									if (pilot->writePilot(pathPilotsTemp, j)) {
+										std::cout << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° '" << pathPilotsTemp << "'!" << std::endl; 
+									}
+									else { 
+										std::cout << "ÐŸÐ¸Ð»Ð¾Ñ‚ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð½ÐµÑÐµÐ½ Ð² Ð±Ð°Ð·Ñƒ!" << std::endl;
+									}
+								}
+
+								j++;
+
+								delete pilot;
+								pilot = nullptr;
+							}
+						}
+						if (remove(pathPilots.c_str())) { throw "error 1: remove"; }
+						if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { throw "error 2: rename"; }
+					}
+					else {
+						std::fstream clear_file(pathPilots, std::fstream::out);
+						clear_file.close();
+					}
+
+					system("cls");
+
+					std::cout << pilotName << " ÑƒÐ´Ð°Ð»ÐµÐ½ Ð¸Ð· Ð±Ð°Ð·Ñ‹ Ð¿Ð¸Ð»Ð¾Ñ‚Ð¾Ð²!" << std::endl;
+
+					break;
+				}
+			}
+		}
+	}
+
+	else if (menu == MenuPilot::Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸_Ð±Ð°Ð·Ñƒ_Ð¿Ð¸Ð»Ð¾Ñ‚Ð¾Ð²) {
+		sizePilots = getNumPilots();
+
+		system("cls");
+
+		if (sizePilots < 1) {
+			std::cout << "Ð’ Ð±Ð°Ð·Ðµ ÐµÑ‰Ðµ Ð½ÐµÑ‚ Ð½Ð¸ Ð¾Ð´Ð½Ð¾Ð³Ð¾ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°!" << std::endl; 
+		}
+		else {
+			for (int i = 0; i < sizePilots; i++) {
+				pilot = new Pilot;
+
+				if (pilot->readPilot(pathPilots, i + 1)) {
+					std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl;
+				}
+				else { 
+					pilot->printPilot();
+				}
+
+				delete pilot;
+				pilot = nullptr;
+			}
+		}
+	}
+}
+
+void menuTrack() {
+	system("cls");
+
+	Track* track = nullptr;
+	TrackVersion* trackVersion = nullptr;
+	TrackVersion* trackVersionAdd = nullptr;
+	int sizeTracks{};
+
+	MenuTrack menu;
+	int select{};
+	while (true) {
+		std::cout <<
+			"\n\t0 - Ð½Ð°Ð·Ð°Ð´"
+			"\n\t1 - Ð²Ð½ÐµÑÑ‚Ð¸ Ð² Ð±Ð°Ð·Ñƒ Ñ‚Ñ€Ð°ÑÑÑƒ"
+			"\n\t2 - Ð²Ð½ÐµÑÑ‚Ð¸ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸ÑŽ Ñ‚Ñ€Ð°ÑÑÑ‹"
+			"\n\t3 - ÑƒÐ´Ð°Ð»Ð¸Ñ‚ÑŒ Ñ‚Ñ€Ð°ÑÑÑƒ"
+			"\n\t4 - Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸ Ð±Ð°Ð·Ñƒ Ñ‚Ñ€Ð°ÑÑ" << std::endl;
+		std::cin >> select;
+		menu = static_cast<MenuTrack>(select);
+
+		if (menu >= MenuTrack::Ð½Ð°Ð·Ð°Ð´ && menu <= MenuTrack::Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸_Ð±Ð°Ð·Ñƒ_Ñ‚Ñ€Ð°ÑÑ) {
+			break;
+		}
+		else {
+			system("cls");
+			std::cout << "ÐÐµÐºÐºÐ¾Ñ€ÐµÐºÑ‚Ð½Ð°Ñ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð°!" << std::endl;
+		}
+	}
+
+	if (menu == MenuTrack::Ð½Ð°Ð·Ð°Ð´) {
+		system("cls");
+		return; 
+	}
+	else if (menu == MenuTrack::Ð²Ð½ÐµÑÑ‚Ð¸_Ð²_Ð±Ð°Ð·Ñƒ_Ñ‚Ñ€Ð°ÑÑÑƒ) {
+		system("cls");
+
+		track = new Track;
+
+		writeTrack(*track);
+
+		sizeTracks = getNumTracks();
+
+		system("cls");
+
+		if (track->writeTrack(pathTracks, ++sizeTracks)) {
+			std::cout << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° '" << pathTracks << "'!" << std::endl; 
+		}
+		else {
+			std::cout << "Ð¢Ñ€Ð°ÑÑÐ° ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð½ÐµÑÐµÐ½Ð° Ð² Ð±Ð°Ð·Ñƒ!" << std::endl;
+		}
+
+		delete track;
+		track = nullptr;
+	}
+	else if (menu == MenuTrack::Ð²Ð½ÐµÑÑ‚Ð¸_ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸ÑŽ_Ñ‚Ñ€Ð°ÑÑÑ‹) {
+		sizeTracks = getNumTracks();
+
+		system("cls");
+
+		if (sizeTracks < 1) {
+			std::cout << "Ð’ Ð±Ð°Ð·Ðµ ÐµÑ‰Ðµ Ð½ÐµÑ‚ Ð½Ð¸ Ð¾Ð´Ð½Ð¾Ð¹ Ñ‚Ñ€Ð°ÑÑÑ‹!" << std::endl;
+		}
+		else {
+			std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ Ñ‚Ñ€Ð°ÑÑÑ‹, ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¹ Ð½ÑƒÐ¶Ð½Ð¾ Ð´Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑŒ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸ÑŽ(0 - Ð¾Ñ‚Ð¼ÐµÐ½Ð°):" << std::endl;
+
+			for (int i = 1; i <= sizeTracks; i++) {
+				track = new Track;
+
+				if (track->readTrack(pathTracks, i)) {
+					std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl;
+				}
+				else { 
+					std::cout << i << " - " << track->getName() << std::endl;
+				}
+
+				delete track;
+				track = nullptr;
+			}
+
+			std::string trackName;
+			int numberAdd{};
+			while (true) {
+				std::cin >> numberAdd;
+
+				if (numberAdd == 0) { 
+					system("cls"); 
+					break; 
+				}
+				else if (numberAdd < 1 || numberAdd > sizeTracks) { 
+					std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ð¾ Ð²Ð²ÐµÐ´ÐµÐ½ Ð½Ð¾Ð¼ÐµÑ€, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+				}
+				else {
+					system("cls");
+
+					trackVersionAdd = new TrackVersion;
+					writeTrackVersion(*trackVersionAdd);
+
+					for (int i = 1; i <= sizeTracks; i++) {
+						if (numberAdd != i) {
+							trackVersion = new TrackVersion;
+
+							if (trackVersion->readTrack(pathTracks, i)) {
+								std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl;
+								throw "error: readTrack";
+							}
+
+							trackVersion->writeTrack(pathTracksTemp, i);
+
+							for (int j = 1; j <= trackVersion->getVersions(); j++) {
+								trackVersion->readTrackVersion(pathTracks, j);
+								trackVersion->writeTrackVersion(pathTracksTemp, j);
+							}
+
+							delete trackVersion;
+							trackVersion = nullptr;
+						}
+						else {
+							trackVersion = new TrackVersion;
+
+							trackVersion->readTrack(pathTracks, i);
+
+							trackName = trackVersion->getName();
+
+							trackVersion->setVersions(trackVersion->getVersions() + 1);
+
+							trackVersion->writeTrack(pathTracksTemp, i);
+
+							for (int j = 1; j <= trackVersion->getVersions(); j++) {
+								if (j < trackVersion->getVersions()) {
+									trackVersion->readTrackVersion(pathTracks, j);
+
+									trackVersion->writeTrackVersion(pathTracksTemp, j);
+								}
+								else {
+									*trackVersion = *trackVersionAdd;
+
+									delete trackVersionAdd;
+									trackVersionAdd = nullptr;
+
+									trackVersion->writeTrackVersion(pathTracksTemp, j);
+								}
+							}
+							delete trackVersion;
+							trackVersion = nullptr;
+						}
+					}
+					if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
+					if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
+
+					system("cls");
+
+					std::cout << "Ðš Ñ‚Ñ€Ð°ÑÑÐµ '" << trackName << "' Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð° Ð½Ð¾Ð²Ð°Ñ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ñ!" << std::endl;
+
+					break;
+				}
+			}
+		}
+	}
+
+	else if (menu == MenuTrack::ÑƒÐ´Ð°Ð»Ð¸Ñ‚ÑŒ_Ñ‚Ñ€Ð°ÑÑÑƒ) {
+		sizeTracks = getNumTracks();
+
+		system("cls");
+
+		if (sizeTracks < 1) { 
+			std::cout << "Ð’ Ð±Ð°Ð·Ðµ ÐµÑ‰Ðµ Ð½ÐµÑ‚ Ð½Ð¸ Ð¾Ð´Ð½Ð¾Ð¹ Ñ‚Ñ€Ð°ÑÑÑ‹!" << std::endl; 
+		}
+		else {
+			std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ Ñ‚Ñ€Ð°ÑÑÑ‹, ÐºÐ¾Ñ‚Ð¾Ñ€ÑƒÑŽ Ð½ÑƒÐ¶Ð½Ð¾ ÑƒÐ´Ð°Ð»Ð¸Ñ‚ÑŒ(0 - Ð¾Ñ‚Ð¼ÐµÐ½Ð°):" << std::endl;
+
+			for (int i = 1; i <= sizeTracks; i++) {
+				track = new Track;
+
+				if (track->readTrack(pathTracks, i)) {
+					std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl;
+				}
+				else {
+					std::cout << i << " - " << track->getName() << std::endl;
+				}
+
+				delete track;
+				track = nullptr;
+			}
+
+			std::string trackName;
+			int numberDelete{};
+			while (true) {
+				std::cin >> numberDelete;
+
+				if (numberDelete == 0) {
+					system("cls"); 
+					break;
+				}
+				else if (numberDelete < 1 || numberDelete > sizeTracks) {
+					std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ð¾ Ð²Ð²ÐµÐ´ÐµÐ½ Ð½Ð¾Ð¼ÐµÑ€, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+				}
+				else {
+					track = new Track;
+
+					if (track->readTrack(pathTracks, numberDelete)) {
+						std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl; 
+					}
+					else {
+						trackName = track->getName();
+					}
+
+					delete track;
+					track = nullptr;
+
+					if (sizeTracks > 1) {
+						for (int i = 1, j = 1; i <= sizeTracks; i++) {
+							if (i != numberDelete) {
+								track = new Track;
+
+								if (track->readTrack(pathTracks, i)) { 
+									std::cout << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° '" << pathTracksTemp << "'!" << std::endl;
+								}
+								else {
+									if (track->writeTrack(pathTracksTemp, j)) { 
+										std::cout << "ÐžÑˆÐ¸Ð±ÐºÐ° Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° '" << pathTracksTemp << "'!" << std::endl;
+									}
+									else {
+										std::cout << "Ð¢Ñ€Ð°ÑÑÐ° ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð½ÐµÑÐµÐ½Ð° Ð² Ð±Ð°Ð·Ñƒ!" << std::endl;
+									}
+								}
+
+								j++;
+
+								delete track;
+								track = nullptr;
+							}
+						}
+						if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
+						if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
+					}
+					else {
+						std::fstream clear_file(pathTracks, std::fstream::out);
+						clear_file.close();
+					}
+
+					system("cls");
+					
+					std::cout << "Ð¢Ñ€Ð°ÑÑÐ° '" << trackName << "' ÑƒÐ´Ð°Ð»ÐµÐ½Ð° Ð¸Ð· Ð±Ð°Ð·Ñ‹ Ñ‚Ñ€Ð°ÑÑ!" << std::endl;
+
+					break;
+				}
+			}
+		}
+	}
+
+	else if (menu == MenuTrack::Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸_Ð±Ð°Ð·Ñƒ_Ñ‚Ñ€Ð°ÑÑ) {
+		sizeTracks = getNumTracks();
+
+		system("cls");
+
+		if (sizeTracks < 1) { 
+			std::cout << "Ð’ Ð±Ð°Ð·Ðµ ÐµÑ‰Ðµ Ð½ÐµÑ‚ Ð½Ð¸ Ð¾Ð´Ð½Ð¾Ð¹ Ñ‚Ñ€Ð°ÑÑÑ‹!" << std::endl; 
+		}
+		else {
+			for (int i = 0; i < sizeTracks; i++) {
+				track = new Track;
+
+				if (track->readTrack(pathTracks, i + 1)) {
+					std::cout << "ÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ ÑÑ‡Ð¸Ñ‚Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ!" << std::endl;
+				}
+
+				track->printTrack();
+
+				delete track;
+				track = nullptr;
+			}
+		}
+	}
+	else { system("cls"); std::cout << "ÐÐµÐºÐºÐ¾Ñ€ÐµÐºÑ‚Ð½Ð°Ñ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð°!" << std::endl; }
+}
+
+int getNumPilots() {
 	int size{};
 	std::string str;
 	std::fstream file;
-	file.open(fileName, std::fstream::in);
+
+	file.open(pathPilots, std::fstream::in);
+
 	if (file.is_open()) {
 		while (file >> str) {
-			if (str == "[pilot]") { size++; }
+			if (str == "[pilot]") {
+				size++;
+			}
 		}
 	}
-	else {
-		std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << fileName << "'!" << std::endl;
-	}
+
 	file.close();
+
 	return size;
 }
 
-int getNumTracks(const std::string fileName) {
+int getNumTracks() {
 	int size{};
 	std::string str;
 	std::fstream file;
-	file.open(fileName, std::fstream::in);
+
+	file.open(pathTracks, std::fstream::in);
+
 	if (file.is_open()) {
 		while (file >> str) {
-			if (str == "[track]") { size++; }
+			if (str == "[track]") {
+				size++;
+			}
 		}
 	}
-	else {
-		std::cout << "Îøèáêà îòêðûòèÿ ôàéëà '" << fileName << "'!" << std::endl;
-	}
+
 	file.close();
+
 	return size;
 }
 
@@ -323,87 +529,124 @@ void writePilot(Pilot& _pilot) {
 	int* p_numbers{ nullptr };
 
 	SetConsoleCP(1251);
-	std::cout << "Ââåäèòå èìÿ ïèëîòà:" << std::endl;
+
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¸Ð¼Ñ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°:" << std::endl;
 	std::cin.get();
 	std::getline(std::cin, name);
 	
-	std::cout << "Ââåäèòå ôàìèëèþ ïèëîòà:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ„Ð°Ð¼Ð¸Ð»Ð¸ÑŽ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°:" << std::endl;
 	std::getline(std::cin, surname);
 
-	std::cout << "Ââåäèòå ñòðàíó ïèëîòà:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÑ‚Ñ€Ð°Ð½Ñƒ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°:" << std::endl;
 	std::getline(std::cin, country);
 
-	std::cout << "Ââåäèòå äåíü ðîæäåíèÿ ïèëîòà:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð´ÐµÐ½ÑŒ Ñ€Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°:" << std::endl;
 	while (true) {
 		std::cin >> dayOfBirth;
-		if (dayOfBirth < 1 || dayOfBirth > 31) { std::cout << "Äåíü ââåäåí íå êîððåêòíî! Ââåäèòå åùå ðàç:" << std::endl; }
-		else { break; }
+		if (dayOfBirth < 1 || dayOfBirth > 31) { 
+			std::cout << "Ð”ÐµÐ½ÑŒ Ð²Ð²ÐµÐ´ÐµÐ½ Ð½Ðµ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl; 
+		}
+		else {
+			break;
+		}
 	}
 
-	std::cout << "Ââåäèòå ìåñÿö ðîæäåíèÿ ïèëîòà:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¼ÐµÑÑÑ† Ñ€Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°:" << std::endl;
 	while (true) {
 		std::cin >> monthOfBirth;
-		if (monthOfBirth < 1 || monthOfBirth > 12) { std::cout << "Ìåñÿö ââåäåí íå êîððåêòíî! Ââåäèòå åùå ðàç:" << std::endl; }
-		else { break; }
+		if (monthOfBirth < 1 || monthOfBirth > 12) { 
+			std::cout << "ÐœÐµÑÑÑ† Ð²Ð²ÐµÐ´ÐµÐ½ Ð½Ðµ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+		}
+		else { 
+			break; 
+		}
 	}
 
-	std::cout << "Ââåäèòå ãîä ðîæäåíèÿ ïèëîòà:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð³Ð¾Ð´ Ñ€Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ Ð¿Ð¸Ð»Ð¾Ñ‚Ð°:" << std::endl;
 	while (true) {
 		std::cin >> yearOfBirth;
-		if (yearOfBirth < 1850) { std::cout << "Ãîä ââåäåí íå êîððåêòíî! Ââåäèòå åùå ðàç:" << std::endl; }
-		else { break; }
+		if (yearOfBirth < 1850) {
+			std::cout << "Ð“Ð¾Ð´ Ð²Ð²ÐµÐ´ÐµÐ½ Ð½Ðµ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+		}
+		else {
+			break;
+		}
 	}
 
-	std::cout << "Ââåäèòå êîëè÷åñòâî ñåçîíîâ, ïðîâåäåííûõ ïèëîòîì â Ôîðìóëå 1:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÐµÐ·Ð¾Ð½Ð¾Ð², Ð¿Ñ€Ð¾Ð²ÐµÐ´ÐµÐ½Ð½Ñ‹Ñ… Ð¿Ð¸Ð»Ð¾Ñ‚Ð¾Ð¼ Ð² Ð¤Ð¾Ñ€Ð¼ÑƒÐ»Ðµ 1:" << std::endl;
 	while (true) {
 		std::cin >> seasons;
-		if (seasons < 1) { std::cout << "Êîëè÷åñòâî ñåçîíîâ íå ìîæåò áûòü ìåíüøå 1! Ââåäèòå åùå ðàç:" << std::endl; }
-		else { break; }
+		if (seasons < 1) {
+			std::cout << "ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÐµÐ·Ð¾Ð½Ð¾Ð² Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚ Ð±Ñ‹Ñ‚ÑŒ Ð¼ÐµÐ½ÑŒÑˆÐµ 1! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+		}
+		else {
+			break;
+		}
 	}
 
 	p_seasons = new int[seasons];
 	for (int i = 0; i < seasons; i++) {
-		std::cout << "Ââåäèòå ñåçîí ¹" << i + 1 << ":" << std::endl;
+		std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÐµÐ·Ð¾Ð½ â„–" << i + 1 << ":" << std::endl;
 		while (true) {
 			std::cin >> p_seasons[i];
-			if (p_seasons[i] < 1950 || p_seasons[i] > 2024) { std::cout << "Ãîä ñåçîíà äîëæåí áûòü íå ìåíüøå 1950 è íå áîëüøå 2024! Ââåäèòå åùå ðàç:" << std::endl; }
-			else { break; }
+			if (p_seasons[i] < 1950 || p_seasons[i] > 2024) {
+				std::cout << "Ð“Ð¾Ð´ ÑÐµÐ·Ð¾Ð½Ð° Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð±Ñ‹Ñ‚ÑŒ Ð½Ðµ Ð¼ÐµÐ½ÑŒÑˆÐµ 1950 Ð¸ Ð½Ðµ Ð±Ð¾Ð»ÑŒÑˆÐµ 2024! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+			}
+			else {
+				break;
+			}
 		}
 	}
 
-	std::cout << "Ââåäèòå êîëè÷åñòâî êîìàíä, çà êîòîðûå âûñòóïàë ïèëîò â Ôîðìóëå 1:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÐºÐ¾Ð¼Ð°Ð½Ð´, Ð·Ð° ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð²Ñ‹ÑÑ‚ÑƒÐ¿Ð°Ð» Ð¿Ð¸Ð»Ð¾Ñ‚ Ð² Ð¤Ð¾Ñ€Ð¼ÑƒÐ»Ðµ 1:" << std::endl;
 	while (true) {
 		std::cin >> teams;
-		if (teams < 1) { std::cout << "Êîëè÷åñòâî êîìàíä íå ìîæåò áûòü ìåíüøå 1! Ââåäèòå åùå ðàç:" << std::endl; }
-		else { break; }
+		if (teams < 1) {
+			std::cout << "ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÐºÐ¾Ð¼Ð°Ð½Ð´ Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚ Ð±Ñ‹Ñ‚ÑŒ Ð¼ÐµÐ½ÑŒÑˆÐµ 1! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+		}
+		else {
+			break;
+		}
 	}
 
 	p_teams = new std::string[teams];
 	for (int i = 0; i < teams; i++) {
-		std::cout << "Ââåäèòå êîìàíäó ¹" << i + 1 << ":" << std::endl;
-		if (i == 0) { std::cin.get(); }
+		std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ â„–" << i + 1 << ":" << std::endl;
+		if (i == 0) { 
+			std::cin.get(); 
+		}
 		std::getline(std::cin, p_teams[i]);
 	}
 
-	std::cout << "Ââåäèòå êîëè÷åñòâî íîìåðîâ, ïîä êîòîðûìè âûñòóïàë ïèëîò â Ôîðìóëå 1:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð½Ð¾Ð¼ÐµÑ€Ð¾Ð², Ð¿Ð¾Ð´ ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¼Ð¸ Ð²Ñ‹ÑÑ‚ÑƒÐ¿Ð°Ð» Ð¿Ð¸Ð»Ð¾Ñ‚ Ð² Ð¤Ð¾Ñ€Ð¼ÑƒÐ»Ðµ 1:" << std::endl;
 	while (true) {
 		std::cin >> numbers;
-		if (numbers < 1) { std::cout << "Êîëè÷åñòâî íîìåðîâ íå ìîæåò áûòü ìåíüøå 1! Ââåäèòå åùå ðàç:" << std::endl; }
-		else { break; }
+		if (numbers < 1) {
+			std::cout << "ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð½Ð¾Ð¼ÐµÑ€Ð¾Ð² Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚ Ð±Ñ‹Ñ‚ÑŒ Ð¼ÐµÐ½ÑŒÑˆÐµ 1! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+		}
+		else {
+			break;
+		}
 	}
 
 	p_numbers = new int[numbers];
 	for (int i = 0; i < numbers; i++) {
-		std::cout << "Ââåäèòå íîìåð ¹" << i + 1 << ":" << std::endl;
+		std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ â„–" << i + 1 << ":" << std::endl;
 		while (true) {
 			std::cin >> p_numbers[i];
-			if (p_numbers[i] < 1 || p_numbers[i] > 99) { std::cout << "Íîìåð äîëæåí áûòü íå ìåíüøå 1 è íå áîëüøå 99! Ââåäèòå åùå ðàç:" << std::endl; }
-			else { break; }
+			if (p_numbers[i] < 1 || p_numbers[i] > 99) {
+				std::cout << "ÐÐ¾Ð¼ÐµÑ€ Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð±Ñ‹Ñ‚ÑŒ Ð½Ðµ Ð¼ÐµÐ½ÑŒÑˆÐµ 1 Ð¸ Ð½Ðµ Ð±Ð¾Ð»ÑŒÑˆÐµ 99! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+			}
+			else {
+				break;
+			}
 		}
 	}
+
 	SetConsoleCP(866);
 
 	Pilot pilot(name, surname, country, dayOfBirth, monthOfBirth, yearOfBirth, seasons, p_seasons, teams, p_teams, numbers, p_numbers);
+
 	_pilot = pilot;
 }
 
@@ -411,15 +654,17 @@ void writeTrack(Track& _track) {
 	std::string name, country;
 
 	SetConsoleCP(1251);
-	std::cout << "Ââåäèòå íàçâàíèå òðàññû:" << std::endl;
+
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ñ‚Ñ€Ð°ÑÑÑ‹:" << std::endl;
 	std::cin.get();
 	std::getline(std::cin, name);
 
-	std::cout << "Ââåäèòå ñòðàíó òðàññû:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÑ‚Ñ€Ð°Ð½Ñƒ Ñ‚Ñ€Ð°ÑÑÑ‹:" << std::endl;
 	std::getline(std::cin, country);
 	SetConsoleCP(866);
 
 	Track track(name, country);
+
 	_track = track;
 }
 
@@ -430,56 +675,64 @@ void writeTrackVersion(TrackVersion& _trackVersion) {
 	int* p_years = nullptr;
 
 	SetConsoleCP(1251);
-	std::cout << "Ââåäèòå íàçâàíèå òðàññû â ýòîé êîíôèãóðàöèè:" << std::endl;
+
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ñ‚Ñ€Ð°ÑÑÑ‹ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin.get();
 	std::getline(std::cin, versionName);
 
-	std::cout << "Ââåäèòå ñêîëüêî ëåò òðàññà áûëà â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÐºÐ¾Ð»ÑŒÐºÐ¾ Ð»ÐµÑ‚ Ñ‚Ñ€Ð°ÑÑÐ° Ð±Ñ‹Ð»Ð° Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> years;
 
 	p_years = new int[years];
 	for (int i = 0; i < years; i++) {
-		std::cout << "Ââåäèòå ãîä ¹" << i + 1 << ":" << std::endl;
+		std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð³Ð¾Ð´ â„–" << i + 1 << ":" << std::endl;
 		while (true) {
 			std::cin >> p_years[i];
-			if (p_years[i] < 1950 || p_years[i] > 2024) { std::cout << "Ãîä äîëæåí áûòü íå ìåíüøå 1950 è íå áîëüøå 2024! Ââåäèòå åùå ðàç:" << std::endl; }
-			else { break; }
+
+			if (p_years[i] < 1950 || p_years[i] > 2024) {
+				std::cout << "Ð“Ð¾Ð´ Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð±Ñ‹Ñ‚ÑŒ Ð½Ðµ Ð¼ÐµÐ½ÑŒÑˆÐµ 1950 Ð¸ Ð½Ðµ Ð±Ð¾Ð»ÑŒÑˆÐµ 2024! Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ðµ Ñ€Ð°Ð·:" << std::endl;
+			}
+			else {
+				break;
+			}
 		}
 	}
 
-	std::cout << "Ââåäèòå êîëè÷åñòâî ïîâîðîòîâ â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚Ð¾Ð² Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> turns;
 
-	std::cout << "Ââåäèòå äèëèíó êðóãà â ìåòðàõ â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð´Ð¸Ð»Ð¸Ð½Ñƒ ÐºÑ€ÑƒÐ³Ð° Ð² Ð¼ÐµÑ‚Ñ€Ð°Ñ… Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> length;
 
-	std::cout << "Ââåäèòå ðåêîðä êðóãà â êâàëèôèêàöèè â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ€ÐµÐºÐ¾Ñ€Ð´ ÐºÑ€ÑƒÐ³Ð° Ð² ÐºÐ²Ð°Ð»Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸Ð¸ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> recordQ;
 
-	std::cout << "Ââåäèòå ãîä ðåêîðäà êðóãà â êâàëèôèêàöèè â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð³Ð¾Ð´ Ñ€ÐµÐºÐ¾Ñ€Ð´Ð° ÐºÑ€ÑƒÐ³Ð° Ð² ÐºÐ²Ð°Ð»Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸Ð¸ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> yearRecordQ;
 
-	std::cout << "Ââåäèòå èìÿ ïèëîòà ðåêîðäà êðóãà â êâàëèôèêàöèè â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¸Ð¼Ñ Ð¿Ð¸Ð»Ð¾Ñ‚Ð° Ñ€ÐµÐºÐ¾Ñ€Ð´Ð° ÐºÑ€ÑƒÐ³Ð° Ð² ÐºÐ²Ð°Ð»Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸Ð¸ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin.get();
 	std::getline(std::cin, pilotRecordQ);
 
-	std::cout << "Ââåäèòå íàçâàíèå êîìàíäû ðåêîðäà êðóãà â êâàëèôèêàöèè â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ Ñ€ÐµÐºÐ¾Ñ€Ð´Ð° ÐºÑ€ÑƒÐ³Ð° Ð² ÐºÐ²Ð°Ð»Ð¸Ñ„Ð¸ÐºÐ°Ñ†Ð¸Ð¸ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::getline(std::cin, teamRecordQ);
 
-	std::cout << "Ââåäèòå ðåêîðä êðóãà â ãîíêå â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ€ÐµÐºÐ¾Ñ€Ð´ ÐºÑ€ÑƒÐ³Ð° Ð² Ð³Ð¾Ð½ÐºÐµ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> recordR;
 
-	std::cout << "Ââåäèòå ãîä ðåêîðäà êðóãà â ãîíêå â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð³Ð¾Ð´ Ñ€ÐµÐºÐ¾Ñ€Ð´Ð° ÐºÑ€ÑƒÐ³Ð° Ð² Ð³Ð¾Ð½ÐºÐµ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin >> yearRecordR;
 
-	std::cout << "Ââåäèòå èìÿ ïèëîòà ðåêîðäà êðóãà â ãîíêå â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¸Ð¼Ñ Ð¿Ð¸Ð»Ð¾Ñ‚Ð° Ñ€ÐµÐºÐ¾Ñ€Ð´Ð° ÐºÑ€ÑƒÐ³Ð° Ð² Ð³Ð¾Ð½ÐºÐµ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::cin.get();
 	std::getline(std::cin, pilotRecordR);
 
-	std::cout << "Ââåäèòå íàçâàíèå êîìàíäû ðåêîðäà êðóãà â ãîíêå â ýòîé êîíôèãóðàöèè:" << std::endl;
+	std::cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ Ñ€ÐµÐºÐ¾Ñ€Ð´Ð° ÐºÑ€ÑƒÐ³Ð° Ð² Ð³Ð¾Ð½ÐºÐµ Ð² ÑÑ‚Ð¾Ð¹ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸:" << std::endl;
 	std::getline(std::cin, teamRecordR);
+
 	SetConsoleCP(866);
 
 	TrackVersion trackVersion(versionName, years, p_years, turns, length, recordQ, recordR, pilotRecordQ, pilotRecordR, teamRecordQ, teamRecordR, yearRecordQ, yearRecordR);
+
 	_trackVersion = trackVersion;
 }

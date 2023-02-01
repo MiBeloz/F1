@@ -1,4 +1,4 @@
-#include "track.h"
+ï»¿#include "track.h"
 
 Track::Track() : versions{ 0 } {}
 
@@ -26,9 +26,9 @@ void Track::setVersions(const int i) {
 }
 
 void Track::printTrack() {
-	std::cout << "Òðàññà: " << name << std::endl;
-	std::cout << "Ñòðàíà: " << country << std::endl;
-	std::cout << "Êîëè÷åñòâî êîíôèãóðàöèé: " << versions << std::endl << std::endl;
+	std::cout << "Ð¢Ñ€Ð°ÑÑÐ°: " << name << std::endl;
+	std::cout << "Ð¡Ñ‚Ñ€Ð°Ð½Ð°: " << country << std::endl;
+	std::cout << "ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¹: " << versions << std::endl << std::endl;
 }
 
 bool Track::writeTrack(const std::string fileName, const int num) {

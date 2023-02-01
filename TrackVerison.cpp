@@ -1,4 +1,4 @@
-#include "TrackVerison.h"
+﻿#include "TrackVerison.h"
 
 TrackVersion::TrackVersion() : years{ 1 }, p_years{ new int[years] }, turns{}, length{}, recordQ{}, recordR{}, yearRecordQ{}, yearRecordR{} {}
 

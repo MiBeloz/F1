@@ -133,6 +133,7 @@
     <ClCompile Include="trackVerison.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="main.h" />
     <ClInclude Include="pilot.h" />
     <ClInclude Include="track.h" />
     <ClInclude Include="trackVerison.h" />
