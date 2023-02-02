@@ -17,23 +17,17 @@ Track& Track::operator=(Track& _track) {
 
 std::string Track::getName() { return name; }
 
-int Track::getVersions() {
-	return versions;
-}
+std::string Track::getCountry() { return country; }
 
-void Track::setVersions(const int i) {
-	versions = i;
-}
+int Track::getVersions() { return versions; }
 
-void Track::printTrack() {
-	std::cout << "Трасса: " << name << std::endl;
-	std::cout << "Страна: " << country << std::endl;
-	std::cout << "Количество конфигураций: " << versions << std::endl << std::endl;
-}
+void Track::setVersions(const int i) { versions = i; }
 
 bool Track::writeTrack(const std::string fileName, const int num) {
 	std::fstream file;
+
 	file.open(fileName, std::fstream::out | std::fstream::app);
+
 	if (file.is_open()) {
 		file << "[track] " << std::to_string(num) << std::endl;
 		file << name << '|';
@@ -41,8 +35,12 @@ bool Track::writeTrack(const std::string fileName, const int num) {
 		file << versions;
 		file << std::endl << std::endl;
 	}
-	else { return true; }
+	else {
+		return true;
+	}
+
 	file.close();
+
 	return false;
 }
 
@@ -50,7 +48,9 @@ bool Track::readTrack(const std::string fileName, const int num) {
 	std::fstream file;
 	std::string str;
 	int _num{};
+
 	file.open(fileName, std::fstream::in);
+
 	if (file.is_open()) {
 		while (file >> str) {
 			if (str == "[track]") {
@@ -65,8 +65,12 @@ bool Track::readTrack(const std::string fileName, const int num) {
 			}
 		}
 	}
-	else { return true; }
+	else { 
+		return true;
+	}
+
 	file.close();
+
 	return false;
 }
 

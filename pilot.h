@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include <iostream>
+
+
 #include <string>
 #include <fstream>
-#include <Windows.h>
 
 
 class Pilot {
@@ -22,17 +22,14 @@ public:
 
 	int getSeasons(const int i);
 	int getSeasons();
-	void setSeasons(const int i, const int n);
-
 	std::string getTeams(const int i);
 	int getTeams();
-	void setTeams(const int i, const std::string str);
-
 	int getNumbers(const int i);
 	int getNumbers();
-	void setNumbers(const int i, const int n);
 
-	void printPilot();
+	void setSeasons(const int i, const int n);
+	void setTeams(const int i, const std::string str);
+	void setNumbers(const int i, const int n);
 
 	bool writePilot(const std::string fileName, const int num);
 	bool readPilot(const std::string fileName, const int num);

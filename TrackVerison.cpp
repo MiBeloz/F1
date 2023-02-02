@@ -44,6 +44,35 @@ TrackVersion& TrackVersion::operator=(TrackVersion& _trackVersion) {
 	return *this;
 }
 
+std::string TrackVersion::getVersionName() { return versionName; }
+
+int TrackVersion::getYears() { return years; }
+
+int TrackVersion::getYears(const int i) {
+	if (i < 0 || i >= years) { return 0; }
+	else { return p_years[i]; }
+}
+
+int TrackVersion::getTurns() { return turns; }
+
+double TrackVersion::getLength() { return length; }
+
+double TrackVersion::getRecordQ() { return recordQ; }
+
+double TrackVersion::getRecordR() { return recordR; }
+
+std::string TrackVersion::getPilotRecordQ() { return pilotRecordQ; }
+
+std::string TrackVersion::getPilotRecordR() { return pilotRecordR; }
+
+std::string TrackVersion::getTeamRecordQ() { return teamRecordQ; }
+
+std::string TrackVersion::getTeamRecordR() { return teamRecordR; }
+
+int TrackVersion::getYearRecordQ() { return yearRecordQ; }
+
+int TrackVersion::getYearRecordR() { return yearRecordR; }
+
 bool TrackVersion::writeTrackVersion(const std::string fileName, const int vers) {
 	std::fstream file;
 	file.open(fileName, std::fstream::out | std::fstream::app);

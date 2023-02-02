@@ -1,8 +1,8 @@
 ﻿#pragma once
 
+
 #include <string>
 #include <fstream>
-#include <iostream>
 
 
 class Track {
@@ -13,11 +13,10 @@ public:
 	Track& operator=(Track& _track);
 
 	std::string getName();
+	std::string getCountry();
 	int getVersions();
 
 	void setVersions(const int i);
-
-	void printTrack();
 
 	bool writeTrack(const std::string fileName, const int num);
 	bool readTrack(const std::string fileName, const int num);

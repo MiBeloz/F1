@@ -1,7 +1,6 @@
 ﻿#include "main.h"
 
 
-
 int main() {
 	setlocale(LC_ALL, "ru");
 	
@@ -9,6 +8,7 @@ int main() {
 	int select{};
 	while (true) {
 		std::cout <<
+			"\tБаза пилотов и трасс Формулы 1.\n"
 			"\n\t0 - выход"
 			"\n\t1 - пилоты"
 			"\n\t2 - трассы" << std::endl;
@@ -38,7 +38,6 @@ int main() {
 void menuPilot() {
 	system("cls");
 
-	Pilot* pilot = nullptr;
 	int sizePilots{};
 
 	MenuPilot menu;
@@ -53,153 +52,41 @@ void menuPilot() {
 		menu = static_cast<MenuPilot>(select);
 
 		if (menu >= MenuPilot::назад && menu <= MenuPilot::вывести_базу_пилотов) { 
-			break;
+			if (menu == MenuPilot::назад) {
+				system("cls");
+				return;
+			}
+			else if (menu == MenuPilot::внести_в_базу_пилота) {
+				addPilotToDatabase();
+			}
+			else if (menu == MenuPilot::удалить_пилота) {
+				sizePilots = getNumPilots();
+
+				system("cls");
+
+				if (sizePilots < 1) {
+					std::cout << "В базе еще нет ни одного пилота!" << std::endl;
+				}
+				else {
+					deletePilotFromDatabase();
+				}
+			}
+			else if (menu == MenuPilot::вывести_базу_пилотов) {
+				sizePilots = getNumPilots();
+
+				system("cls");
+
+				if (sizePilots < 1) {
+					std::cout << "В базе еще нет ни одного пилота!" << std::endl;
+				}
+				else {
+					printAllPilots();
+				}
+			}
 		}
 		else {
 			system("cls");
 			std::cout << "Неккоректная команда!" << std::endl;
-		}
-	}
-
-	if (menu == MenuPilot::назад) { 
-		system("cls"); 
-		return; 
-	}
-	else if (menu == MenuPilot::внести_в_базу_пилота) {
-		system("cls");
-
-		pilot = new Pilot;
-
-		writePilot(*pilot);
-
-		sizePilots = getNumPilots();
-
-		system("cls");
-
-		if (pilot->writePilot(pathPilots, ++sizePilots)) {
-			std::cout << "Ошибка открытия файла '" << pathPilots << "'!" << std::endl;
-		}
-		else { 
-			std::cout << "Пилот успешно занесен в базу!" << std::endl; 
-		}
-
-		delete pilot;
-		pilot = nullptr;
-	}
-
-	else if (menu == MenuPilot::удалить_пилота) {
-		sizePilots = getNumPilots();
-
-		system("cls");
-
-		if (sizePilots < 1) { 
-			std::cout << "В базе еще нет ни одного пилота!" << std::endl; 
-		}
-		else {
-			std::cout << "Введите номер пилота, которого нужно удалить(0 - отмена):" << std::endl;
-			for (int i = 1; i <= sizePilots; i++) {
-				pilot = new Pilot;
-
-				if (pilot->readPilot(pathPilots, i)) { 
-					std::cout << "Не удалось считать данные!" << std::endl;
-				}
-				else { 
-					std::cout << i << " - " << pilot->getFullName() << std::endl;
-				}
-
-				delete pilot;
-				pilot = nullptr;
-			}
-
-			std::string pilotName;
-			int numberDelete{};
-			while (true)
-			{
-				std::cin >> numberDelete;
-
-				if (numberDelete == 0) { 
-					system("cls");
-					break; 
-				}
-				else if (numberDelete < 1 || numberDelete > sizePilots) { 
-					std::cout << "Неверно введен номер, введите еще раз:" << std::endl; 
-				}
-				else {
-					pilot = new Pilot;
-
-					if (pilot->readPilot(pathPilots, numberDelete)) {
-						std::cout << "Не удалось считать данные!" << std::endl; 
-					}
-					else { 
-						pilotName = pilot->getFullName();
-					}
-
-					delete pilot;
-					pilot = nullptr;
-
-					if (sizePilots > 1) {
-						for (int i = 1, j = 1; i <= sizePilots; i++) {
-							if (i != numberDelete) {
-								pilot = new Pilot;
-
-								if (pilot->readPilot(pathPilots, i)) {
-									std::cout << "Ошибка открытия файла '" << pathPilotsTemp << "'!" << std::endl;
-								}
-								else {
-									if (pilot->writePilot(pathPilotsTemp, j)) {
-										std::cout << "Ошибка открытия файла '" << pathPilotsTemp << "'!" << std::endl; 
-									}
-									else { 
-										std::cout << "Пилот успешно занесен в базу!" << std::endl;
-									}
-								}
-
-								j++;
-
-								delete pilot;
-								pilot = nullptr;
-							}
-						}
-						if (remove(pathPilots.c_str())) { throw "error 1: remove"; }
-						if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { throw "error 2: rename"; }
-					}
-					else {
-						std::fstream clear_file(pathPilots, std::fstream::out);
-						clear_file.close();
-					}
-
-					system("cls");
-
-					std::cout << pilotName << " удален из базы пилотов!" << std::endl;
-
-					break;
-				}
-			}
-		}
-	}
-
-	else if (menu == MenuPilot::вывести_базу_пилотов) {
-		sizePilots = getNumPilots();
-
-		system("cls");
-
-		if (sizePilots < 1) {
-			std::cout << "В базе еще нет ни одного пилота!" << std::endl; 
-		}
-		else {
-			for (int i = 0; i < sizePilots; i++) {
-				pilot = new Pilot;
-
-				if (pilot->readPilot(pathPilots, i + 1)) {
-					std::cout << "Не удалось считать данные!" << std::endl;
-				}
-				else { 
-					pilot->printPilot();
-				}
-
-				delete pilot;
-				pilot = nullptr;
-			}
 		}
 	}
 }
@@ -218,266 +105,509 @@ void menuTrack() {
 		std::cout <<
 			"\n\t0 - назад"
 			"\n\t1 - внести в базу трассу"
-			"\n\t2 - внести конфигурацию трассы"
-			"\n\t3 - удалить трассу"
-			"\n\t4 - вывести базу трасс" << std::endl;
+			"\n\t2 - удалить трассу"
+			"\n\t3 - внести конфигурацию трассы"
+			"\n\t4 - удалить конфигурацию трассы"
+			"\n\t5 - вывести базу трасс" 
+			"\n\t6 - вывести базу трасс с конфигурациями" << std::endl;
 		std::cin >> select;
 		menu = static_cast<MenuTrack>(select);
 
-		if (menu >= MenuTrack::назад && menu <= MenuTrack::вывести_базу_трасс) {
-			break;
+		if (menu >= MenuTrack::назад && menu <= MenuTrack::вывести_базу_трасс_с_конфигурациями) {
+			if (menu == MenuTrack::назад) {
+				system("cls");
+				return;
+			}
+			else if (menu == MenuTrack::внести_в_базу_трассу) {
+				addTrackToDatabase();
+			}
+			else if (menu == MenuTrack::удалить_трассу) {
+				deleteTrackFromDatabase();
+			}
+			else if (menu == MenuTrack::внести_конфигурацию_трассы) {
+				addTrackConfigToDatabase();
+			}
+			else if (menu == MenuTrack::удалить_конфигурацию_трассы) {
+				deleteTrackConfigFromDatabase();
+			}
+			else if (menu == MenuTrack::вывести_базу_трасс) {
+				printAllTracks();
+			}
+			else if (menu == MenuTrack::вывести_базу_трасс_с_конфигурациями) {
+				printAllTracksWithConfig();
+			}
 		}
 		else {
 			system("cls");
 			std::cout << "Неккоректная команда!" << std::endl;
 		}
 	}
+}
 
-	if (menu == MenuTrack::назад) {
-		system("cls");
-		return; 
+void addPilotToDatabase() {
+	Pilot* pilot = new Pilot;
+	int sizePilots = getNumPilots();
+
+	system("cls");
+
+	writePilot(*pilot);
+
+	system("cls");
+
+	if (pilot->writePilot(pathPilots, ++sizePilots)) {
+		std::cout << "Ошибка открытия файла '" << pathPilots << "'!" << std::endl;
 	}
-	else if (menu == MenuTrack::внести_в_базу_трассу) {
-		system("cls");
-
-		track = new Track;
-
-		writeTrack(*track);
-
-		sizeTracks = getNumTracks();
-
-		system("cls");
-
-		if (track->writeTrack(pathTracks, ++sizeTracks)) {
-			std::cout << "Ошибка открытия файла '" << pathTracks << "'!" << std::endl; 
-		}
-		else {
-			std::cout << "Трасса успешно занесена в базу!" << std::endl;
-		}
-
-		delete track;
-		track = nullptr;
+	else {
+		std::cout << "Пилот успешно занесен в базу!" << std::endl;
 	}
-	else if (menu == MenuTrack::внести_конфигурацию_трассы) {
-		sizeTracks = getNumTracks();
 
-		system("cls");
+	delete pilot;
+	pilot = nullptr;
+}
 
-		if (sizeTracks < 1) {
-			std::cout << "В базе еще нет ни одной трассы!" << std::endl;
-		}
-		else {
-			std::cout << "Введите номер трассы, которой нужно добавить конфигурацию(0 - отмена):" << std::endl;
+void deletePilotFromDatabase() {
+	Pilot* pilot = nullptr;
+	int sizePilots = getNumPilots();
+	std::string pilotName;
+	int numberDelete{};
 
-			for (int i = 1; i <= sizeTracks; i++) {
-				track = new Track;
+	system("cls");
 
-				if (track->readTrack(pathTracks, i)) {
-					std::cout << "Не удалось считать данные!" << std::endl;
-				}
-				else { 
-					std::cout << i << " - " << track->getName() << std::endl;
-				}
+	if (sizePilots < 1) {
+		std::cout << "В базе еще нет ни одного пилота!" << std::endl;
+		return;
+	}
+	else {
+		std::cout << "Введите номер пилота, которого нужно удалить(0 - отмена):" << std::endl;
+		for (int i = 1; i <= sizePilots; i++) {
+			pilot = new Pilot;
 
-				delete track;
-				track = nullptr;
+			if (pilot->readPilot(pathPilots, i)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				std::cout << i << " - " << pilot->getFullName() << std::endl;
 			}
 
-			std::string trackName;
-			int numberAdd{};
-			while (true) {
-				std::cin >> numberAdd;
+			delete pilot;
+			pilot = nullptr;
+		}
+	}
 
-				if (numberAdd == 0) { 
-					system("cls"); 
-					break; 
-				}
-				else if (numberAdd < 1 || numberAdd > sizeTracks) { 
-					std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
-				}
-				else {
-					system("cls");
+	while (true)
+	{
+		std::cin >> numberDelete;
+		if (numberDelete == 0) {
+			system("cls");
+			break;
+		}
+		else if (numberDelete < 1 || numberDelete > sizePilots) {
+			std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
+		}
+		else {
+			pilot = new Pilot;
 
-					trackVersionAdd = new TrackVersion;
-					writeTrackVersion(*trackVersionAdd);
+			if (pilot->readPilot(pathPilots, numberDelete)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				pilotName = pilot->getFullName();
+			}
 
-					for (int i = 1; i <= sizeTracks; i++) {
-						if (numberAdd != i) {
-							trackVersion = new TrackVersion;
+			delete pilot;
+			pilot = nullptr;
 
-							if (trackVersion->readTrack(pathTracks, i)) {
-								std::cout << "Не удалось считать данные!" << std::endl;
-								throw "error: readTrack";
-							}
+			if (sizePilots > 1) {
+				for (int i = 1, j = 1; i <= sizePilots; i++) {
+					if (i != numberDelete) {
+						pilot = new Pilot;
 
-							trackVersion->writeTrack(pathTracksTemp, i);
-
-							for (int j = 1; j <= trackVersion->getVersions(); j++) {
-								trackVersion->readTrackVersion(pathTracks, j);
-								trackVersion->writeTrackVersion(pathTracksTemp, j);
-							}
-
-							delete trackVersion;
-							trackVersion = nullptr;
+						if (pilot->readPilot(pathPilots, i)) {
+							std::cout << "Ошибка открытия файла '" << pathPilotsTemp << "'!" << std::endl;
 						}
 						else {
-							trackVersion = new TrackVersion;
-
-							trackVersion->readTrack(pathTracks, i);
-
-							trackName = trackVersion->getName();
-
-							trackVersion->setVersions(trackVersion->getVersions() + 1);
-
-							trackVersion->writeTrack(pathTracksTemp, i);
-
-							for (int j = 1; j <= trackVersion->getVersions(); j++) {
-								if (j < trackVersion->getVersions()) {
-									trackVersion->readTrackVersion(pathTracks, j);
-
-									trackVersion->writeTrackVersion(pathTracksTemp, j);
-								}
-								else {
-									*trackVersion = *trackVersionAdd;
-
-									delete trackVersionAdd;
-									trackVersionAdd = nullptr;
-
-									trackVersion->writeTrackVersion(pathTracksTemp, j);
-								}
+							if (pilot->writePilot(pathPilotsTemp, j)) {
+								std::cout << "Ошибка открытия файла '" << pathPilotsTemp << "'!" << std::endl;
 							}
-							delete trackVersion;
-							trackVersion = nullptr;
+							else {
+								std::cout << "Пилот успешно занесен в базу!" << std::endl;
+							}
 						}
+
+						j++;
+
+						delete pilot;
+						pilot = nullptr;
 					}
-					if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
-					if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
-
-					system("cls");
-
-					std::cout << "К трассе '" << trackName << "' добавлена новая конфигурация!" << std::endl;
-
-					break;
 				}
+				if (remove(pathPilots.c_str())) { throw "error 1: remove"; }
+				if (rename(pathPilotsTemp.c_str(), pathPilots.c_str())) { throw "error 2: rename"; }
 			}
+			else {
+				std::fstream clear_file(pathPilots, std::fstream::out);
+				clear_file.close();
+			}
+
+			system("cls");
+
+			std::cout << pilotName << " удален из базы пилотов!" << std::endl;
+
+			break;
+		}
+	}
+}
+
+void printAllPilots() {
+	Pilot* pilot = nullptr;
+	int sizePilots = getNumPilots();
+
+	system("cls");
+
+	for (int i = 1; i <= sizePilots; i++) {
+		pilot = new Pilot;
+
+		if (pilot->readPilot(pathPilots, i)) {
+			std::cout << "Не удалось считать данные!" << std::endl;
+		}
+		else {
+			std::cout << "Пилот: " << pilot->getShortName() << std::endl;
+			std::cout << "Страна: " << pilot->getCountry() << std::endl;
+			std::cout << "Дата рождения: " << pilot->getDateOfBirth() << std::endl;
+			if (pilot->getSeasons() == 1) { std::cout << "Участвовал в 1 сезоне в Формуле 1: "; }
+			else { std::cout << "Участвовал в " << pilot->getSeasons() << " сезонах в Формуле 1: "; }
+
+			for (int i = 0; i < pilot->getSeasons(); i++) {
+				if (i == pilot->getSeasons() - 1) { std::cout << pilot->getSeasons(i) << "." << std::endl; }
+				else { std::cout << pilot->getSeasons(i) << ", "; }
+			}
+
+			if (pilot->getTeams() == 1) { std::cout << "Выступал в 1 команде: "; }
+			else { std::cout << "Выступал в " << pilot->getTeams() << " командах: "; }
+			for (int i = 0; i < pilot->getTeams(); i++) {
+				if (i == pilot->getTeams() - 1) { std::cout << pilot->getTeams(i) << "." << std::endl; }
+				else { std::cout << pilot->getTeams(i) << ", "; }
+			}
+
+			std::cout << "Выступал под номерами: ";
+			for (int i = 0; i < pilot->getNumbers(); i++) {
+				if (i == pilot->getNumbers() - 1) { std::cout << pilot->getNumbers(i) << ".\n" << std::endl; }
+				else { std::cout << pilot->getNumbers(i) << ", "; }
+			}
+		}
+
+		delete pilot;
+		pilot = nullptr;
+	}
+}
+
+void addTrackToDatabase() {
+	Track* track = new Track;
+	int sizeTracks = getNumTracks();
+
+	system("cls");
+
+	writeTrack(*track);
+
+	system("cls");
+
+	if (track->writeTrack(pathTracks, ++sizeTracks)) {
+		std::cout << "Ошибка открытия файла '" << pathTracks << "'!" << std::endl;
+	}
+	else {
+		std::cout << "Трасса успешно занесена в базу!" << std::endl;
+	}
+
+	delete track;
+	track = nullptr;
+}
+
+void deleteTrackFromDatabase() {
+	Track* track = nullptr;
+	int sizeTracks = getNumTracks();
+	std::string trackName;
+	int numberDelete{};
+
+	system("cls");
+
+	if (sizeTracks < 1) {
+		std::cout << "В базе еще нет ни одной трассы!" << std::endl;
+		return;
+	}
+	else {
+		std::cout << "Введите номер трассы, которую нужно удалить(0 - отмена):" << std::endl;
+
+		for (int i = 1; i <= sizeTracks; i++) {
+			track = new Track;
+
+			if (track->readTrack(pathTracks, i)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				std::cout << i << " - " << track->getName() << std::endl;
+			}
+
+			delete track;
+			track = nullptr;
 		}
 	}
 
-	else if (menu == MenuTrack::удалить_трассу) {
-		sizeTracks = getNumTracks();
+	while (true) {
+		std::cin >> numberDelete;
 
-		system("cls");
-
-		if (sizeTracks < 1) { 
-			std::cout << "В базе еще нет ни одной трассы!" << std::endl; 
+		if (numberDelete == 0) {
+			system("cls");
+			break;
+		}
+		else if (numberDelete < 1 || numberDelete > sizeTracks) {
+			std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
 		}
 		else {
-			std::cout << "Введите номер трассы, которую нужно удалить(0 - отмена):" << std::endl;
+			track = new Track;
+
+			if (track->readTrack(pathTracks, numberDelete)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				trackName = track->getName();
+			}
+
+			delete track;
+			track = nullptr;
+
+			if (sizeTracks > 1) {
+				for (int i = 1, j = 1; i <= sizeTracks; i++) {
+					if (i != numberDelete) {
+						track = new Track;
+
+						if (track->readTrack(pathTracks, i)) {
+							std::cout << "Ошибка открытия файла '" << pathTracksTemp << "'!" << std::endl;
+						}
+						else {
+							if (track->writeTrack(pathTracksTemp, j)) {
+								std::cout << "Ошибка открытия файла '" << pathTracksTemp << "'!" << std::endl;
+							}
+							else {
+								std::cout << "Трасса успешно занесена в базу!" << std::endl;
+							}
+						}
+
+						j++;
+
+						delete track;
+						track = nullptr;
+					}
+				}
+				if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
+				if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
+			}
+			else {
+				std::fstream clear_file(pathTracks, std::fstream::out);
+				clear_file.close();
+			}
+
+			system("cls");
+
+			std::cout << "Трасса '" << trackName << "' удалена из базы трасс!" << std::endl;
+
+			break;
+		}
+	}
+}
+
+void addTrackConfigToDatabase() {
+	Track* track = nullptr;
+	TrackVersion* trackVersion = nullptr;
+	TrackVersion* trackVersionAdd = nullptr;
+	std::string trackName;
+	int numberAdd{};
+	int sizeTracks = getNumTracks();
+
+	system("cls");
+
+	if (sizeTracks < 1) {
+		std::cout << "В базе еще нет ни одной трассы!" << std::endl;
+	}
+	else {
+		std::cout << "Введите номер трассы, которой нужно добавить конфигурацию(0 - отмена):" << std::endl;
+
+		for (int i = 1; i <= sizeTracks; i++) {
+			track = new Track;
+
+			if (track->readTrack(pathTracks, i)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				std::cout << i << " - " << track->getName() << std::endl;
+			}
+
+			delete track;
+			track = nullptr;
+		}
+	}
+
+	while (true) {
+		std::cin >> numberAdd;
+
+		if (numberAdd == 0) {
+			system("cls");
+			break;
+		}
+		else if (numberAdd < 1 || numberAdd > sizeTracks) {
+			std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
+		}
+		else {
+			system("cls");
+
+			trackVersionAdd = new TrackVersion;
+			writeTrackVersion(*trackVersionAdd);
 
 			for (int i = 1; i <= sizeTracks; i++) {
-				track = new Track;
+				if (numberAdd != i) {
+					trackVersion = new TrackVersion;
 
-				if (track->readTrack(pathTracks, i)) {
-					std::cout << "Не удалось считать данные!" << std::endl;
-				}
-				else {
-					std::cout << i << " - " << track->getName() << std::endl;
-				}
-
-				delete track;
-				track = nullptr;
-			}
-
-			std::string trackName;
-			int numberDelete{};
-			while (true) {
-				std::cin >> numberDelete;
-
-				if (numberDelete == 0) {
-					system("cls"); 
-					break;
-				}
-				else if (numberDelete < 1 || numberDelete > sizeTracks) {
-					std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
-				}
-				else {
-					track = new Track;
-
-					if (track->readTrack(pathTracks, numberDelete)) {
-						std::cout << "Не удалось считать данные!" << std::endl; 
-					}
-					else {
-						trackName = track->getName();
+					if (trackVersion->readTrack(pathTracks, i)) {
+						std::cout << "Не удалось считать данные!" << std::endl;
+						throw "error: readTrack";
 					}
 
-					delete track;
-					track = nullptr;
+					trackVersion->writeTrack(pathTracksTemp, i);
 
-					if (sizeTracks > 1) {
-						for (int i = 1, j = 1; i <= sizeTracks; i++) {
-							if (i != numberDelete) {
-								track = new Track;
+					for (int j = 1; j <= trackVersion->getVersions(); j++) {
+						trackVersion->readTrackVersion(pathTracks, j);
+						trackVersion->writeTrackVersion(pathTracksTemp, j);
+					}
 
-								if (track->readTrack(pathTracks, i)) { 
-									std::cout << "Ошибка открытия файла '" << pathTracksTemp << "'!" << std::endl;
-								}
-								else {
-									if (track->writeTrack(pathTracksTemp, j)) { 
-										std::cout << "Ошибка открытия файла '" << pathTracksTemp << "'!" << std::endl;
-									}
-									else {
-										std::cout << "Трасса успешно занесена в базу!" << std::endl;
-									}
-								}
+					delete trackVersion;
+					trackVersion = nullptr;
+				}
+				else {
+					trackVersion = new TrackVersion;
 
-								j++;
+					trackVersion->readTrack(pathTracks, i);
 
-								delete track;
-								track = nullptr;
-							}
+					trackName = trackVersion->getName();
+
+					trackVersion->setVersions(trackVersion->getVersions() + 1);
+
+					trackVersion->writeTrack(pathTracksTemp, i);
+
+					for (int j = 1; j <= trackVersion->getVersions(); j++) {
+						if (j < trackVersion->getVersions()) {
+							trackVersion->readTrackVersion(pathTracks, j);
+
+							trackVersion->writeTrackVersion(pathTracksTemp, j);
 						}
-						if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
-						if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
-					}
-					else {
-						std::fstream clear_file(pathTracks, std::fstream::out);
-						clear_file.close();
-					}
+						else {
+							*trackVersion = *trackVersionAdd;
 
-					system("cls");
-					
-					std::cout << "Трасса '" << trackName << "' удалена из базы трасс!" << std::endl;
-
-					break;
+							trackVersion->writeTrackVersion(pathTracksTemp, j);
+						}
+					}
+					delete trackVersion;
+					trackVersion = nullptr;
 				}
 			}
+			delete trackVersionAdd;
+			trackVersionAdd = nullptr;
+
+			if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
+			if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
+
+			system("cls");
+
+			std::cout << "К трассе '" << trackName << "' добавлена новая конфигурация!" << std::endl;
+
+			break;
 		}
 	}
+}
 
-	else if (menu == MenuTrack::вывести_базу_трасс) {
-		sizeTracks = getNumTracks();
+void deleteTrackConfigFromDatabase() {
 
-		system("cls");
+}
 
-		if (sizeTracks < 1) { 
-			std::cout << "В базе еще нет ни одной трассы!" << std::endl; 
-		}
-		else {
-			for (int i = 0; i < sizeTracks; i++) {
-				track = new Track;
+void printAllTracks() {
+	Track* track = nullptr;
+	int sizeTracks = getNumTracks();
 
-				if (track->readTrack(pathTracks, i + 1)) {
-					std::cout << "Не удалось считать данные!" << std::endl;
-				}
+	system("cls");
 
-				track->printTrack();
+	if (sizeTracks < 1) {
+		std::cout << "В базе еще нет ни одной трассы!" << std::endl;
+	}
+	else {
+		for (int i = 1; i <= sizeTracks; i++) {
+			track = new Track;
 
-				delete track;
-				track = nullptr;
+			if (track->readTrack(pathTracks, i)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
 			}
+			else {
+				std::cout << "Трасса: " << track->getName() << std::endl;
+				std::cout << "Страна: " << track->getCountry() << std::endl;
+				std::cout << "Количество конфигураций: " << track->getVersions() << std::endl << std::endl;
+			}
+
+			delete track;
+			track = nullptr;
 		}
 	}
-	else { system("cls"); std::cout << "Неккоректная команда!" << std::endl; }
+}
+
+void printAllTracksWithConfig() {
+	TrackVersion* trackVersion = nullptr;;
+	int sizeTracks = getNumTracks();
+
+	system("cls");
+
+	if (sizeTracks < 1) {
+		std::cout << "В базе еще нет ни одной трассы!" << std::endl;
+	}
+	else {
+		for (int i = 1; i <= sizeTracks; i++) {
+			trackVersion = new TrackVersion;
+
+			if (trackVersion->readTrack(pathTracks, i)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				std::cout << "Трасса: " << trackVersion->getName() << "." << std::endl;
+
+				std::cout << "Страна: " << trackVersion->getCountry() << "." << std::endl;
+
+				std::cout << "Количество конфигураций: " << trackVersion->getVersions() << "." << std::endl;
+
+				for (int i = 1; i <= trackVersion->getVersions(); i++) {
+					std::cout << "\tВерсия " << i << ":" << std::endl;
+
+					std::cout << "\tНазвание трассы: " << trackVersion->getVersionName() << "." << std::endl;
+
+					std::cout << "\tДлина трассы(метров): " << trackVersion->getLength() << "." << std::endl;
+
+					std::cout << "\tКоличество поворотов: " << trackVersion->getTurns() << "." << std::endl;
+
+					std::cout << "\tКоличество лет в этой конфигурации: " << trackVersion->getYears() << ", : ";
+					for (int i = 0; i < trackVersion->getYears(); i++) {
+						if (trackVersion->getYears() == 1) {
+							std::cout << trackVersion->getYears(i) << "." << std::endl;
+						}
+						else {
+							std::cout << trackVersion->getYears(i) << ", ";
+						}
+					}
+
+					std::cout << "\tРекорд круга в квалификации: " << trackVersion->getRecordQ() << ", " << trackVersion->getPilotRecordQ() << ", "
+						<< trackVersion->getTeamRecordQ() << ", " << trackVersion->getYearRecordQ() << "." << std::endl;
+
+					std::cout << "\tРекорд круга в гонке: " << trackVersion->getRecordR() << ", " << trackVersion->getPilotRecordR() << ", "
+						<< trackVersion->getTeamRecordR() << ", " << trackVersion->getYearRecordR() << "." << std::endl << std::endl;
+				}
+			}
+
+			delete trackVersion;
+			trackVersion = nullptr;
+		}
+	}
 }
 
 int getNumPilots() {
@@ -528,7 +658,8 @@ void writePilot(Pilot& _pilot) {
 	std::string* p_teams{ nullptr };
 	int* p_numbers{ nullptr };
 
-	SetConsoleCP(1251);
+	system("chcp 1251");
+	system("cls");
 
 	std::cout << "Введите имя пилота:" << std::endl;
 	std::cin.get();
@@ -643,7 +774,8 @@ void writePilot(Pilot& _pilot) {
 		}
 	}
 
-	SetConsoleCP(866);
+	system("chcp 866");
+	system("cls");
 
 	Pilot pilot(name, surname, country, dayOfBirth, monthOfBirth, yearOfBirth, seasons, p_seasons, teams, p_teams, numbers, p_numbers);
 
@@ -653,7 +785,8 @@ void writePilot(Pilot& _pilot) {
 void writeTrack(Track& _track) {
 	std::string name, country;
 
-	SetConsoleCP(1251);
+	system("chcp 1251");
+	system("cls");
 
 	std::cout << "Введите название трассы:" << std::endl;
 	std::cin.get();
@@ -661,7 +794,9 @@ void writeTrack(Track& _track) {
 
 	std::cout << "Введите страну трассы:" << std::endl;
 	std::getline(std::cin, country);
-	SetConsoleCP(866);
+
+	system("chcp 866");
+	system("cls");
 
 	Track track(name, country);
 
@@ -674,7 +809,8 @@ void writeTrackVersion(TrackVersion& _trackVersion) {
 	double length{}, recordQ{}, recordR{};
 	int* p_years = nullptr;
 
-	SetConsoleCP(1251);
+	system("chcp 1251");
+	system("cls");
 
 	std::cout << "Введите название трассы в этой конфигурации:" << std::endl;
 	std::cin.get();
@@ -730,7 +866,8 @@ void writeTrackVersion(TrackVersion& _trackVersion) {
 	std::cout << "Введите название команды рекорда круга в гонке в этой конфигурации:" << std::endl;
 	std::getline(std::cin, teamRecordR);
 
-	SetConsoleCP(866);
+	system("chcp 866");
+	system("cls");
 
 	TrackVersion trackVersion(versionName, years, p_years, turns, length, recordQ, recordR, pilotRecordQ, pilotRecordR, teamRecordQ, teamRecordR, yearRecordQ, yearRecordR);
 

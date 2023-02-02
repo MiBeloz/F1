@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+
 #include "track.h"
 
 
@@ -11,6 +12,20 @@ public:
 	~TrackVersion();
 
 	TrackVersion& operator=(TrackVersion& _trackVersion);
+
+	std::string getVersionName();
+	int getYears();
+	int getYears(const int i);
+	int getTurns();
+	double getLength();
+	double getRecordQ();
+	double getRecordR();
+	std::string getPilotRecordQ();
+	std::string getPilotRecordR();
+	std::string getTeamRecordQ();
+	std::string getTeamRecordR();
+	int getYearRecordQ();
+	int getYearRecordR();
 
 	bool writeTrackVersion(const std::string fileName, const int vers);
 	bool readTrackVersion(const std::string fileName, const int vers);

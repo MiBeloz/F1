@@ -69,65 +69,39 @@ std::string Pilot::getCountry() { return country; }
 std::string Pilot::getDateOfBirth() { return std::to_string(dayOfBirth) + '.' + std::to_string(monthOfBirth) + '.' + std::to_string(yearOfBirth); }
 
 int Pilot::getSeasons(const int i) {
-	if (p_seasons == nullptr || i < 0 || i >= seasons) { return 0; }
+	if (i < 0 || i >= seasons) { return 0; }
 	else { return p_seasons[i]; }	
 }
 
 int Pilot::getSeasons() { return seasons; }
+
+std::string Pilot::getTeams(const int i) {
+	if (i < 0 || i >= teams) { return "0"; }
+	else { return p_teams[i]; }
+}
+
+int Pilot::getTeams() { return teams; }
+
+int Pilot::getNumbers(const int i) {
+	if (i < 0 || i >= numbers) { return 0; }
+	else { return p_numbers[i]; }
+}
+
+int Pilot::getNumbers() { return numbers; }
 
 void Pilot::setSeasons(const int i, const int n) {
 	if (i < 0 || i >= seasons) { return; }
 	else { p_seasons[i] = n; }
 }
 
-std::string Pilot::getTeams(const int i) {
-	if (p_teams == nullptr || i < 0 || i >= teams) { return "0"; }
-	else { return p_teams[i]; }
-}
-
-int Pilot::getTeams() { return teams; }
-
 void Pilot::setTeams(const int i, const std::string n) {
 	if (i < 0 || i >= teams) { return; }
 	else { p_teams[i] = n; }
 }
 
-int Pilot::getNumbers(const int i) {
-	if (p_numbers == nullptr || i < 0 || i >= numbers) { return 0; }
-	else { return p_numbers[i]; }
-}
-
-int Pilot::getNumbers() { return numbers; }
-
 void Pilot::setNumbers(const int i, const int n) {
 	if (i < 0 || i >= numbers) { return; }
 	else { p_numbers[i] = n; }
-}
-
-void Pilot::printPilot() {
-	std::cout << "Пилот: " << getShortName() << std::endl;
-	std::cout << "Страна: " << country << std::endl;
-	std::cout << "Дата рождения: " << getDateOfBirth() << std::endl;
-	if (seasons == 1) { std::cout << "Участвовал в " << seasons << " сезоне в Формуле 1: "; }
-	else { std::cout << "Участвовал в " << seasons << " сезонах в Формуле 1: "; }
-
-	for (int i = 0; i < seasons; i++) {
-		if (i == seasons - 1) { std::cout << p_seasons[i] << "." << std::endl; }
-		else { std::cout << p_seasons[i] << ", "; }
-	}
-
-	if (teams == 1) { std::cout << "Выступал в " << teams << " команде: "; }
-	else { std::cout << "Выступал в " << teams << " командах: "; }
-	for (int i = 0; i < teams; i++) {
-		if (i == teams - 1) { std::cout << p_teams[i] << "." << std::endl; }
-		else { std::cout << p_teams[i] << ", "; }
-	}
-
-	std::cout << "Выступал под номерами: ";
-	for (int i = 0; i < numbers; i++) {
-		if (i == numbers - 1) { std::cout << p_numbers[i] << ".\n" << std::endl; }
-		else { std::cout << p_numbers[i] << ", "; }
-	}
 }
 
 bool Pilot::writePilot(const std::string fileName, const int num) {

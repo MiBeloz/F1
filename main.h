@@ -4,6 +4,8 @@
 #include "track.h"
 #include "trackVerison.h"
 
+#include <iostream>
+
 
 const std::string pathPilots = "pilots.dbf";
 const std::string pathPilotsTemp = "pilots.dbf.tmp";
@@ -14,8 +16,20 @@ const std::string pathTracksTemp = "tracks.dbf.tmp";
 void menuPilot();
 void menuTrack();
 
+void addPilotToDatabase();
+void deletePilotFromDatabase();
+void printAllPilots();
+
+void addTrackToDatabase();
+void deleteTrackFromDatabase();
+void addTrackConfigToDatabase();
+void deleteTrackConfigFromDatabase();
+void printAllTracks();
+void printAllTracksWithConfig();
+
 int getNumPilots();
 int getNumTracks();
+
 void writePilot(Pilot& _pilot);
 void writeTrack(Track& _track);
 void writeTrackVersion(TrackVersion& _trackVersion);
@@ -37,7 +51,9 @@ enum class MenuPilot {
 enum class MenuTrack {
 	назад,
 	внести_в_базу_трассу,
-	внести_конфигурацию_трассы,
 	удалить_трассу,
-	вывести_базу_трасс
+	внести_конфигурацию_трассы,
+	удалить_конфигурацию_трассы,
+	вывести_базу_трасс,
+	вывести_базу_трасс_с_конфигурациями
 };
