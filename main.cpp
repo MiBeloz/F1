@@ -523,7 +523,157 @@ void addTrackConfigToDatabase() {
 }
 
 void deleteTrackConfigFromDatabase() {
+	Track* track = nullptr;
+	TrackVersion* trackVersion = nullptr;
+	int sizeTracks = getNumTracks();
+	std::string trackName;
+	int numberDelete{};
 
+	system("cls");
+
+	if (sizeTracks < 1) {
+		std::cout << "В базе еще нет ни одной трассы!" << std::endl;
+		return;
+	}
+	else {
+		std::cout << "Введите номер трассы, конфигурацию которой нужно удалить(0 - отмена):" << std::endl;
+
+		for (int i = 1; i <= sizeTracks; i++) {
+			track = new Track;
+
+			if (track->readTrack(pathTracks, i)) {
+				std::cout << "Не удалось считать данные!" << std::endl;
+			}
+			else {
+				std::cout << i << " - " << track->getName() << std::endl;
+			}
+
+			delete track;
+			track = nullptr;
+		}
+	}
+
+	while (true) {
+		std::cin >> numberDelete;
+
+		if (numberDelete == 0) {
+			system("cls");
+			return;
+		}
+		else if (numberDelete < 1 || numberDelete > sizeTracks) {
+			std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
+		}
+		else {
+			break;
+		}
+	}
+		
+	system("cls");
+
+	trackVersion = new TrackVersion;
+
+	if (trackVersion->readTrack(pathTracks, numberDelete)) {
+		std::cout << "Не удалось считать данные!" << std::endl;
+	}
+	else {
+		std::cout << "\t" << trackVersion->getName() << std::endl << std::endl << std::endl;
+				
+		if (trackVersion->getVersions() < 1) {
+			std::cout << "У этой трассы нет конфигураций!\n\nНажмите любую клавишу для продолжения..." << std::endl;
+
+			system("pause > nul");
+			system("cls");
+
+			return;
+		}
+		else {
+			for (int i = 1; i <= trackVersion->getVersions(); i++) {
+				if (trackVersion->readTrackVersion(pathTracks, i)) {
+					std::cout << "Не удалось считать данные!" << std::endl;
+				}
+				else {
+					std::cout << "\tВерсия " << i << ":" << std::endl;
+
+					std::cout << "\tНазвание трассы: " << trackVersion->getVersionName() << "." << std::endl;
+
+					std::cout << "\tДлина трассы(метров): " << trackVersion->getLength() << "." << std::endl;
+
+					std::cout << "\tКоличество поворотов: " << trackVersion->getTurns() << "." << std::endl;
+
+					std::cout << "\tКоличество лет в этой конфигурации - " << trackVersion->getYears() << ": ";
+
+					for (int i = 0; i < trackVersion->getYears(); i++) {
+						if (trackVersion->getYears() == i + 1) {
+							std::cout << trackVersion->getYears(i) << "." << std::endl;
+						}
+						else {
+							std::cout << trackVersion->getYears(i) << ", ";
+						}
+					}
+
+					std::cout << "\tРекорд круга в квалификации: " << trackVersion->getRecordQ() << ", " << trackVersion->getPilotRecordQ() << ", "
+						<< trackVersion->getTeamRecordQ() << ", " << trackVersion->getYearRecordQ() << "." << std::endl;
+
+					std::cout << "\tРекорд круга в гонке: " << trackVersion->getRecordR() << ", " << trackVersion->getPilotRecordR() << ", "
+						<< trackVersion->getTeamRecordR() << ", " << trackVersion->getYearRecordR() << "." << std::endl << std::endl;
+				}
+			}
+		}
+	}
+	std::cout << "Введите номер конфигурации трассы, которую нужно удалить(0 - отмена):" << std::endl;
+
+	while (true) {
+		std::cin >> numberDelete;
+
+		if (numberDelete == 0) {
+			system("cls");
+			return;
+		}
+		else if (numberDelete < 1 || numberDelete > trackVersion->getVersions()) {
+			std::cout << "Неверно введен номер, введите еще раз:" << std::endl;
+		}
+		else {
+			trackName = trackVersion->getName();
+			break;
+		}
+	}
+
+	delete trackVersion;
+	trackVersion = nullptr;
+
+	for (int i = 1; i <= sizeTracks; i++) {
+		trackVersion = new TrackVersion;
+
+		if (trackVersion->readTrack(pathTracks, i)) {
+			std::cout << "Не удалось считать данные!" << std::endl;
+		}
+
+		if (trackName == trackVersion->getName()) {
+			trackVersion->setVersions(trackVersion->getVersions() - 1);
+		}
+
+		trackVersion->writeTrack(pathTracksTemp, i);
+
+		for (int j = 1; j <= trackVersion->getVersions(); j++) {
+			if (trackName == trackVersion->getName() && numberDelete == j) {
+				continue;
+			}
+			else {
+				trackVersion->readTrackVersion(pathTracks, j);
+				trackVersion->writeTrackVersion(pathTracksTemp, j);
+			}
+		}
+
+		delete trackVersion;
+		trackVersion = nullptr;
+	}
+
+	if (remove(pathTracks.c_str())) { throw "error 1: remove"; }
+	if (rename(pathTracksTemp.c_str(), pathTracks.c_str())) { throw "error 2: rename"; }
+
+	system("cls");
+
+	std::cout << "Из трассы '" << trackName << "' удалена конфигурация '" << numberDelete << "'.\n" << std::endl;
 }
 
 void printAllTracks() {
@@ -578,29 +728,34 @@ void printAllTracksWithConfig() {
 				std::cout << "Количество конфигураций: " << trackVersion->getVersions() << "." << std::endl;
 
 				for (int i = 1; i <= trackVersion->getVersions(); i++) {
-					std::cout << "\tВерсия " << i << ":" << std::endl;
-
-					std::cout << "\tНазвание трассы: " << trackVersion->getVersionName() << "." << std::endl;
-
-					std::cout << "\tДлина трассы(метров): " << trackVersion->getLength() << "." << std::endl;
-
-					std::cout << "\tКоличество поворотов: " << trackVersion->getTurns() << "." << std::endl;
-
-					std::cout << "\tКоличество лет в этой конфигурации: " << trackVersion->getYears() << ", : ";
-					for (int i = 0; i < trackVersion->getYears(); i++) {
-						if (trackVersion->getYears() == 1) {
-							std::cout << trackVersion->getYears(i) << "." << std::endl;
-						}
-						else {
-							std::cout << trackVersion->getYears(i) << ", ";
-						}
+					if (trackVersion->readTrackVersion(pathTracks, i)) {
+						std::cout << "Не удалось считать данные!" << std::endl;
 					}
+					else {
+						std::cout << "\tВерсия " << i << ":" << std::endl;
 
-					std::cout << "\tРекорд круга в квалификации: " << trackVersion->getRecordQ() << ", " << trackVersion->getPilotRecordQ() << ", "
-						<< trackVersion->getTeamRecordQ() << ", " << trackVersion->getYearRecordQ() << "." << std::endl;
+						std::cout << "\tНазвание трассы: " << trackVersion->getVersionName() << "." << std::endl;
 
-					std::cout << "\tРекорд круга в гонке: " << trackVersion->getRecordR() << ", " << trackVersion->getPilotRecordR() << ", "
-						<< trackVersion->getTeamRecordR() << ", " << trackVersion->getYearRecordR() << "." << std::endl << std::endl;
+						std::cout << "\tДлина трассы(метров): " << trackVersion->getLength() << "." << std::endl;
+
+						std::cout << "\tКоличество поворотов: " << trackVersion->getTurns() << "." << std::endl;
+
+						std::cout << "\tКоличество лет в этой конфигурации - " << trackVersion->getYears() << ": ";
+						for (int i = 0; i < trackVersion->getYears(); i++) {
+							if (trackVersion->getYears() == i + 1) {
+								std::cout << trackVersion->getYears(i) << "." << std::endl;
+							}
+							else {
+								std::cout << trackVersion->getYears(i) << ", ";
+							}
+						}
+
+						std::cout << "\tРекорд круга в квалификации: " << trackVersion->getRecordQ() << ", " << trackVersion->getPilotRecordQ() << ", "
+							<< trackVersion->getTeamRecordQ() << ", " << trackVersion->getYearRecordQ() << "." << std::endl;
+
+						std::cout << "\tРекорд круга в гонке: " << trackVersion->getRecordR() << ", " << trackVersion->getPilotRecordR() << ", "
+							<< trackVersion->getTeamRecordR() << ", " << trackVersion->getYearRecordR() << "." << std::endl << std::endl;
+					}
 				}
 			}
 
