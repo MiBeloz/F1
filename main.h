@@ -5,6 +5,7 @@
 #include "trackVerison.h"
 
 #include <iostream>
+#include <Windows.h>
 
 
 const std::string pathPilots = "pilots.dbf";
@@ -30,8 +31,8 @@ void printAllTracksWithConfig();
 int getNumPilots();
 int getNumTracks();
 
-void writePilot(Pilot& _pilot);
-void writeTrack(Track& _track);
+void createPilot(Pilot& _pilot);
+void createTrack(Track& _track);
 void writeTrackVersion(TrackVersion& _trackVersion);
 
 
