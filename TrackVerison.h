@@ -3,12 +3,15 @@
 
 #include "track.h"
 
+#include <vector>
+
 
 class TrackVersion : public Track {
 public:
 	TrackVersion();
-	TrackVersion(std::string _versionName, int _years, int* _p_years, int _turns, double _length, double _recordQ, double _recordR,
-		std::string _pilotRecordQ, std::string _pilotRecordR, std::string _teamRecordQ, std::string _teamRecordR, int _yearRecordQ, int _yearRecordR);
+	TrackVersion(const std::string _name, const std::string _country);
+	TrackVersion(const std::string _versionName, std::vector<int> _years, const int _turns, const double _length, const double _recordQ, const double _recordR,
+		const std::string _pilotRecordQ, const std::string _pilotRecordR, const std::string _teamRecordQ, const std::string _teamRecordR, const int _yearRecordQ, const int _yearRecordR);
 	~TrackVersion();
 
 	TrackVersion& operator=(TrackVersion& _trackVersion);
@@ -32,8 +35,7 @@ public:
 
 private:
 	std::string versionName;
-	int years;
-	int* p_years;
+	std::vector<int> years;
 	int turns;
 	double length;
 	double recordQ, recordR;

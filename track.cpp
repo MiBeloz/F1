@@ -1,8 +1,8 @@
 ﻿#include "track.h"
 
-Track::Track() : versions{ 0 } {}
+Track::Track()  : versions{0} {}
 
-Track::Track(std::string _name, std::string _country) {
+Track::Track(const std::string _name, const std::string _country) {
 	name = _name;
 	country = _country;
 	versions = 0;
@@ -12,16 +12,21 @@ Track& Track::operator=(Track& _track) {
 	name = _track.name;
 	country = _track.country;
 	versions = _track.versions;
+
 	return *this;
 }
 
-std::string Track::getName() { return name; }
+std::string Track::getName() { 
+	return name; 
+}
 
-std::string Track::getCountry() { return country; }
+std::string Track::getCountry() { 
+	return country;
+}
 
-int Track::getVersions() { return versions; }
-
-void Track::setVersions(const int i) { versions = i; }
+int Track::getVersions() { 
+	return versions;
+}
 
 bool Track::writeTrack(const std::string fileName, const int num) {
 	std::fstream file;
@@ -29,10 +34,14 @@ bool Track::writeTrack(const std::string fileName, const int num) {
 	file.open(fileName, std::fstream::out | std::fstream::app);
 
 	if (file.is_open()) {
-		file << "[track] " << std::to_string(num) << std::endl;
+		file << "[track] " << std::to_string(num + 1) << std::endl;
+
 		file << name << '|';
+
 		file << country << '|' << std::endl;
+
 		file << versions;
+
 		file << std::endl << std::endl;
 	}
 	else {
@@ -55,11 +64,14 @@ bool Track::readTrack(const std::string fileName, const int num) {
 		while (file >> str) {
 			if (str == "[track]") {
 				file >> _num;
-				if (_num == num) {
+				if (_num == num + 1) {
 					std::getline(file, str, '|');
 					name = str.substr(1);
+
 					std::getline(file, country, '|');
+
 					file >> versions;
+
 					break;
 				}
 			}

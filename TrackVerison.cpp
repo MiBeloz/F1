@@ -1,13 +1,19 @@
 ﻿#include "TrackVerison.h"
 
-TrackVersion::TrackVersion() : years{ 1 }, p_years{ new int[years] }, turns{}, length{}, recordQ{}, recordR{}, yearRecordQ{}, yearRecordR{} {}
+TrackVersion::TrackVersion() : turns{}, length{}, recordQ{}, recordR{}, yearRecordQ{}, yearRecordR{} {
+	versions++;
+}
 
-TrackVersion::TrackVersion(std::string _versionName, int _years, int* _p_years, int _turns, double _length, double _recordQ, double _recordR,
-	std::string _pilotRecordQ, std::string _pilotRecordR, std::string _teamRecordQ, std::string _teamRecordR, int _yearRecordQ, int _yearRecordR) {
+TrackVersion::TrackVersion(const std::string _name, const std::string _country) : turns{}, length{}, recordQ{}, recordR{}, yearRecordQ{}, yearRecordR{} {
+	name = _name;
+	country = _country;
+	versions++;
+}
+
+TrackVersion::TrackVersion(const std::string _versionName, std::vector<int> _years, const int _turns, const double _length, const double _recordQ, const double _recordR,
+	const std::string _pilotRecordQ, const std::string _pilotRecordR, const std::string _teamRecordQ, const std::string _teamRecordR, const int _yearRecordQ, const int _yearRecordR) {
 	versionName = _versionName;
 	years = _years;
-	p_years = new int[years];
-	for (int i = 0; i < years; i++) { p_years[i] = _p_years[i]; }
 	turns = _turns;
 	length = _length;
 	recordQ = _recordQ;
@@ -18,19 +24,17 @@ TrackVersion::TrackVersion(std::string _versionName, int _years, int* _p_years, 
 	teamRecordR = _teamRecordR;
 	yearRecordQ = _yearRecordQ;
 	yearRecordR = _yearRecordR;
+
+	versions++;
 }
 
 TrackVersion::~TrackVersion() {
-	delete[] p_years;
-	p_years = nullptr;
+	versions--;
 }
 
 TrackVersion& TrackVersion::operator=(TrackVersion& _trackVersion) {
 	versionName = _trackVersion.versionName;
 	years = _trackVersion.years;
-	delete[] p_years;
-	p_years = new int[years];
-	for (int i = 0; i < years; i++) { p_years[i] = _trackVersion.p_years[i]; }
 	turns = _trackVersion.turns;
 	length = _trackVersion.length;
 	recordQ = _trackVersion.recordQ;
@@ -41,99 +45,163 @@ TrackVersion& TrackVersion::operator=(TrackVersion& _trackVersion) {
 	teamRecordR = _trackVersion.teamRecordR;
 	yearRecordQ = _trackVersion.yearRecordQ;
 	yearRecordR = _trackVersion.yearRecordR;
+
 	return *this;
 }
 
-std::string TrackVersion::getVersionName() { return versionName; }
-
-int TrackVersion::getYears() { return years; }
-
-int TrackVersion::getYears(const int i) {
-	if (i < 0 || i >= years) { return 0; }
-	else { return p_years[i]; }
+std::string TrackVersion::getVersionName() {
+	return versionName; 
 }
 
-int TrackVersion::getTurns() { return turns; }
+int TrackVersion::getYears() {
+	return static_cast<int>(years.size());
+}
 
-double TrackVersion::getLength() { return length; }
+int TrackVersion::getYears(const int i) {
+	return years.at(i);
+}
 
-double TrackVersion::getRecordQ() { return recordQ; }
+int TrackVersion::getTurns() { 
+	return turns; 
+}
 
-double TrackVersion::getRecordR() { return recordR; }
+double TrackVersion::getLength() {
+	return length; 
+}
 
-std::string TrackVersion::getPilotRecordQ() { return pilotRecordQ; }
+double TrackVersion::getRecordQ() {
+	return recordQ; 
+}
 
-std::string TrackVersion::getPilotRecordR() { return pilotRecordR; }
+double TrackVersion::getRecordR() {
+	return recordR; 
+}
 
-std::string TrackVersion::getTeamRecordQ() { return teamRecordQ; }
+std::string TrackVersion::getPilotRecordQ() {
+	return pilotRecordQ; 
+}
 
-std::string TrackVersion::getTeamRecordR() { return teamRecordR; }
+std::string TrackVersion::getPilotRecordR() {
+	return pilotRecordR; 
+}
 
-int TrackVersion::getYearRecordQ() { return yearRecordQ; }
+std::string TrackVersion::getTeamRecordQ() {
+	return teamRecordQ; 
+}
 
-int TrackVersion::getYearRecordR() { return yearRecordR; }
+std::string TrackVersion::getTeamRecordR() {
+	return teamRecordR;
+}
+
+int TrackVersion::getYearRecordQ() {
+	return yearRecordQ; 
+}
+
+int TrackVersion::getYearRecordR() {
+	return yearRecordR; 
+}
 
 bool TrackVersion::writeTrackVersion(const std::string fileName, const int vers) {
 	std::fstream file;
+
 	file.open(fileName, std::fstream::out | std::fstream::app);
+
 	if (file.is_open()) {
-		file << "[" << name << "] " << std::to_string(vers) << std::endl;
+		file << "[" << name << "] " << std::to_string(vers + 1) << std::endl;
+
 		file << versionName << '|';
+
 		file << pilotRecordQ << '|';
+
 		file << pilotRecordR << '|';
+
 		file << teamRecordQ << '|';
+
 		file << teamRecordR << '|' << std::endl;
+
 		file << turns << ' ';
+
 		file << length << ' ';
+
 		file << yearRecordQ << ' ';
+
 		file << yearRecordR << ' ';
+
 		file << recordQ << ' ';
+
 		file << recordR << ' ';
-		file << years << ' ';
-		for (int i = 0; i < years; i++) {
-			file << p_years[i] << ' ';
+
+		file << years.size() << ' ';
+		for (int i = 0; i < years.size(); i++) {
+			file << static_cast<int>(years.at(i)) << ' ';
 		}
+
 		file << std::endl << std::endl;
 	}
-	else { return true; }
+	else { 
+		return true;
+	}
+
 	file.close();
+
 	return false;
 }
 
 bool TrackVersion::readTrackVersion(const std::string fileName, const int vers) {
 	std::fstream file;
 	std::string str;
+	int numYears{};
 	int _vers{};
+
 	file.open(fileName, std::fstream::in);
+
 	if (file.is_open()) {
 		while (file >> str) {
 			if (str == "[" + name + "]") {
 				file >> _vers;
-				if (_vers == vers) {
+
+				if (_vers == vers + 1) {
+					years.clear();
+
 					std::getline(file, str, '|');
 					versionName = str.substr(1);
+
 					std::getline(file, pilotRecordQ, '|');
+
 					std::getline(file, pilotRecordR, '|');
+
 					std::getline(file, teamRecordQ, '|');
+
 					std::getline(file, teamRecordR, '|');
+
 					file >> turns;
+
 					file >> length;
+
 					file >> yearRecordQ;
+
 					file >> yearRecordR;
+
 					file >> recordQ;
+
 					file >> recordR;
-					file >> years;
-					delete[] p_years;
-					p_years = new int[years];
-					for (int i = 0; i < years; i++) {
-						file >> p_years[i];
+
+					file >> numYears;
+					for (int i = 0, year = 0; i < numYears; i++) {
+						file >> year;
+						years.push_back(year);
 					}
+
 					break;
 				}
 			}
 		}
 	}
-	else { return true; }
+	else {
+		return true;
+	}
+
 	file.close();
+
 	return false;
 }

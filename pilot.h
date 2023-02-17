@@ -3,13 +3,14 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
 
 
 class Pilot {
 public:
 	Pilot();
-	Pilot(std::string _name, std::string _surname, std::string _country, int _dayOfBirth, int _monthOfBirth, int _yearOfBirth, 
-	int _seasons, int* _p_seasons, int _teams, std::string* _p_teams, int _numbers, int* _p_numbers);
+	Pilot(const std::string _name, const std::string _surname, const std::string _country, const int _dayOfBirth, const int _monthOfBirth, const int _yearOfBirth,
+		const std::vector<int> _seasons, const std::vector<std::string> _teams, const std::vector<int> _numbers);
 
 	~Pilot();
 
@@ -38,8 +39,7 @@ public:
 private:
 	std::string name, surname, country;
 	int dayOfBirth, monthOfBirth, yearOfBirth;
-	int seasons, teams, numbers;
-	int* p_seasons;
-	std::string* p_teams;
-	int* p_numbers;
+	std::vector<int> seasons;
+	std::vector<std::string> teams;
+	std::vector<int> numbers;
 };

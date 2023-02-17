@@ -6,34 +6,37 @@
 
 #include <iostream>
 #include <Windows.h>
+#include <vector>
+
+#define PATH_PILOTS "pilots.dbf"
+#define PATH_PILOTS_TEMP "pilots.dbf.tmp"
+#define PATH_TRACKS "tracks.dbf"
+#define PATH_TRACKS_TEMP "tracks.dbf.tmp"
 
 
-const std::string pathPilots = "pilots.dbf";
-const std::string pathPilotsTemp = "pilots.dbf.tmp";
-const std::string pathTracks = "tracks.dbf";
-const std::string pathTracksTemp = "tracks.dbf.tmp";
+void loadPilots(std::vector<Pilot>& pilots);
+void loadTracks(std::vector<std::vector<TrackVersion>>& tracks);
 
+void menuPilot(std::vector<Pilot>& pilots);
+void menuTrack(std::vector<std::vector<TrackVersion>>& tracks);
 
-void menuPilot();
-void menuTrack();
+void addPilotToDatabase(std::vector<Pilot>& pilots);
+void deletePilotFromDatabase(std::vector<Pilot>& pilots);
+void printAllPilots(std::vector<Pilot>& pilots);
 
-void addPilotToDatabase();
-void deletePilotFromDatabase();
-void printAllPilots();
-
-void addTrackToDatabase();
+void addTrackToDatabase(std::vector<std::vector<TrackVersion>>& tracks);
 void deleteTrackFromDatabase();
 void addTrackConfigToDatabase();
 void deleteTrackConfigFromDatabase();
-void printAllTracks();
+void printAllTracks(std::vector<std::vector<TrackVersion>>& tracks);
 void printAllTracksWithConfig();
 
 int getNumPilots();
 int getNumTracks();
 
-void createPilot(Pilot& _pilot);
-void createTrack(Track& _track);
-void writeTrackVersion(TrackVersion& _trackVersion);
+void createPilot(std::vector<Pilot>& pilots);
+void createTrack(std::vector<std::vector<TrackVersion>>& tracks);
+void createTrackVersion(std::vector<TrackVersion>& tracks);
 
 
 enum class MainMenu {

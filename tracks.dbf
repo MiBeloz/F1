@@ -3,14 +3,22 @@ Silverston|UK|
 1
 
 [Silverston] 1
-hhhhhhh|p|p|t|t|
-15 22222 2002 2002 22 22 1 2002 
+SilverstonOne|Robert Kubica|Michael Schumacher|BMW|Ferrari|
+16 5666 2002 2003 90 89 3 2002 2003 2004 
 
 [track] 2
-kkk|qqq|
-1
+Spa|UK|
+2
 
-[kkk] 1
-rrrrrrrrrrrrrr|ttt|t|ttttt|tt|
-12 2222 2002 2002 23 22 2 2002 2003 
+[Spa] 1
+SpaOne|Juan Pablo Montoya|Michael Schumacher|BMW|Ferrari|
+16 5666 2002 2003 90 89 3 2002 2003 2004 
+
+[Spa] 2
+SpaTwo|Pedro de la Rosa|Michael Schumacher|BMW|Ferrari|
+16 5666 2002 2003 90 89 3 2002 2003 2004 
+
+[track] 3
+Monza|Italy|
+0
 
