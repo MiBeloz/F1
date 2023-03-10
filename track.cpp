@@ -1,19 +1,10 @@
 ﻿#include "track.h"
 
-Track::Track()  : versions{0} {}
+Track::Track() {}
 
 Track::Track(const std::string _name, const std::string _country) {
 	name = _name;
 	country = _country;
-	versions = 0;
-}
-
-Track& Track::operator=(Track& _track) {
-	name = _track.name;
-	country = _track.country;
-	versions = _track.versions;
-
-	return *this;
 }
 
 std::string Track::getName() { 
@@ -22,10 +13,6 @@ std::string Track::getName() {
 
 std::string Track::getCountry() { 
 	return country;
-}
-
-int Track::getVersions() { 
-	return versions;
 }
 
 bool Track::writeTrack(const std::string fileName, const int num) {
@@ -40,7 +27,7 @@ bool Track::writeTrack(const std::string fileName, const int num) {
 
 		file << country << '|' << std::endl;
 
-		file << versions;
+		file << trackVersion.size();
 
 		file << std::endl << std::endl;
 	}
@@ -57,6 +44,7 @@ bool Track::readTrack(const std::string fileName, const int num) {
 	std::fstream file;
 	std::string str;
 	int _num{};
+	int versions{};
 
 	file.open(fileName, std::fstream::in);
 
@@ -71,6 +59,10 @@ bool Track::readTrack(const std::string fileName, const int num) {
 					std::getline(file, country, '|');
 
 					file >> versions;
+
+					for (int i = 0; i < versions; i++) {
+						trackVersion.push_back(TrackVersion());
+					}
 
 					break;
 				}

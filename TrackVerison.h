@@ -1,20 +1,16 @@
 ﻿#pragma once
 
-
-#include "track.h"
-
+#include <string>
 #include <vector>
+#include <fstream>
 
 
-class TrackVersion : public Track {
+class TrackVersion {
 public:
 	TrackVersion();
-	TrackVersion(const std::string _name, const std::string _country);
 	TrackVersion(const std::string _versionName, std::vector<int> _years, const int _turns, const double _length, const double _recordQ, const double _recordR,
 		const std::string _pilotRecordQ, const std::string _pilotRecordR, const std::string _teamRecordQ, const std::string _teamRecordR, const int _yearRecordQ, const int _yearRecordR);
 	~TrackVersion();
-
-	TrackVersion& operator=(TrackVersion& _trackVersion);
 
 	std::string getVersionName();
 	int getYears();
@@ -30,8 +26,8 @@ public:
 	int getYearRecordQ();
 	int getYearRecordR();
 
-	bool writeTrackVersion(const std::string fileName, const int vers);
-	bool readTrackVersion(const std::string fileName, const int vers);
+	bool writeTrackVersion(const std::string fileName, const int vers, const std::string trackName);
+	bool readTrackVersion(const std::string fileName, const int vers, const std::string trackName);
 
 private:
 	std::string versionName;

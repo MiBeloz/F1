@@ -15,49 +15,54 @@
 
 
 void loadPilots(std::vector<Pilot>& pilots);
-void loadTracks(std::vector<std::vector<TrackVersion>>& tracks);
+void loadTracks(std::vector<Track>& tracks);
 
 void menuPilot(std::vector<Pilot>& pilots);
-void menuTrack(std::vector<std::vector<TrackVersion>>& tracks);
+void menuTrack(std::vector<Track>& tracks);
 
 void addPilotToDatabase(std::vector<Pilot>& pilots);
 void deletePilotFromDatabase(std::vector<Pilot>& pilots);
 void printAllPilots(std::vector<Pilot>& pilots);
 
-void addTrackToDatabase(std::vector<std::vector<TrackVersion>>& tracks);
-void deleteTrackFromDatabase();
-void addTrackConfigToDatabase();
-void deleteTrackConfigFromDatabase();
-void printAllTracks(std::vector<std::vector<TrackVersion>>& tracks);
-void printAllTracksWithConfig();
+void addTrackToDatabase(std::vector<Track>& tracks);
+void deleteTrackFromDatabase(std::vector<Track>& tracks);
+void addTrackVersionToDatabase(std::vector<Track>& tracks);
+void deleteTrackVersionFromDatabase(std::vector<Track>& tracks);
+void printAllTracks(std::vector<Track>& tracks);
+void printAllTracksWithVersion(std::vector<Track>& tracks);
 
 int getNumPilots();
 int getNumTracks();
 
-void createPilot(std::vector<Pilot>& pilots);
-void createTrack(std::vector<std::vector<TrackVersion>>& tracks);
-void createTrackVersion(std::vector<TrackVersion>& tracks);
+void rewritePilotsDatabase(std::vector<Pilot>& pilots);
+void rewriteTracksDatabase(std::vector<Track>& tracks);
 
+void createPilot(std::vector<Pilot>& pilots);
+void createTrack(std::vector<Track>& tracks);
+void createTrackVersion(std::vector<Track>& tracks, const int index_of_track);
+
+void printTrack(std::vector<Track>& tracks, const int index_of_track);
+void printTrackVersion(std::vector<Track>& tracks, const int index_of_track, const int index_of_version);
 
 enum class MainMenu {
-	выход,
-	пилоты,
-	трассы
+	exit,
+	pilots,
+	tracks
 };
 
 enum class MenuPilot {
-	назад,
-	внести_в_базу_пилота,
-	удалить_пилота,
-	вывести_базу_пилотов
+	back,
+	add_pilot_to_database,
+	delete_pilot_from_database,
+	print_database_of_pilots
 };
 
 enum class MenuTrack {
-	назад,
-	внести_в_базу_трассу,
-	удалить_трассу,
-	внести_конфигурацию_трассы,
-	удалить_конфигурацию_трассы,
-	вывести_базу_трасс,
-	вывести_базу_трасс_с_конфигурациями
+	back,
+	add_track_to_database,
+	delete_track_from_database,
+	add_trackConfig_to_database,
+	delete_trackConfig_from_database,
+	print_database_of_tracks,
+	print_database_of_tracks_with_configs
 };

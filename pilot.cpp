@@ -148,7 +148,6 @@ bool Pilot::writePilot(const std::string fileName, const int num) {
 	else { 
 		return true; 
 	}
-
 	file.close();
 
 	return false;
